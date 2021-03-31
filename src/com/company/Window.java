@@ -315,7 +315,7 @@ public class Window extends JFrame implements ActionListener{
         }
         else if(e.getSource()==About)
         {
-            JOptionPane.showMessageDialog(null,"ATM simulator v0.5.1","Info",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,"ATM simulator v0.5.1.1","Info",JOptionPane.INFORMATION_MESSAGE);
         }
 
 

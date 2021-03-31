@@ -20,7 +20,7 @@ Zwracane kody:
 
 public class StateManager extends JPanel
 {
-    private String[] states = {"IDLE","INPUT","OUTPUT","PIN","SUMMARY"};
+    private String[] states = {"IDLE","INPUT","OUTPUT","PIN","SUMMARY","FINALIZE"};
     private Vector<String> statesHistory;
     private String currentState;
     private int pinCode[];
@@ -130,6 +130,7 @@ public class StateManager extends JPanel
                         {
                             returnCode = 0;
                             System.out.println("Success");
+                            currentState = states[4];
                         }
                         else {
                             System.out.println("Failure");
@@ -158,12 +159,16 @@ public class StateManager extends JPanel
 
                 break;
             case "SUMMARY":
+                //tutaj operacja wyboru kwoty wpłaty/wypłaty
+
+                break;
+            case "FINALIZE":
+                //tutaj operacja wyboru drukowania potwierdzenia
+
                 break;
         }
         if(returnCode==0)stateChanged = true;
         updateVisible();
         return returnCode;
     }
-
-
 }
