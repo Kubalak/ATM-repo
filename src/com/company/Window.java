@@ -1,9 +1,13 @@
 package com.company;
+import com.company.user.CreditCard;
+import com.company.user.User;
+import com.company.user.Wallet;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 
 
 public class Window extends JFrame implements ActionListener{
@@ -17,8 +21,18 @@ public class Window extends JFrame implements ActionListener{
     JButton keyLeft2, keyLeft3, keyRight1,keyRight2,keyRight3;
     JLabel ActionIn, ActionOut;
     StateManager State;
+    User[] users;
     Window(){
-
+        CreditCard[] cards = new CreditCard[1];
+        cards[0] = new CreditCard(1234,1000.0);
+        users = new User[1];
+        users[0] = new User("Jan","Kowalski");
+        users[0].addCards(cards);
+        Wallet wallet = new Wallet();
+        wallet.cash_in("10",3);
+        wallet.cash_in("20",2);
+        wallet.cash_in("200",1);
+        users[0].setWallet(wallet);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(800,900);
         this.setResizable(false);
@@ -31,7 +45,7 @@ public class Window extends JFrame implements ActionListener{
         About.addActionListener(this);
         Help.add(About);
         Menubar.add(Help);
-        State = new StateManager();
+        State = new StateManager(users[0]);
 
         JPanel top = new JPanel();
         JPanel left = new JPanel();
@@ -66,8 +80,8 @@ public class Window extends JFrame implements ActionListener{
         right.setPreferredSize(new Dimension(100,100));
         bottom.setPreferredSize(new Dimension(200,400));
         center.setPreferredSize(new Dimension(300,300));
-        keypad.setSize(250,350);
-        keypad.setLocation(125,75);
+        keypad.setSize(400,350);
+        keypad.setLocation(120,40);
 
         top.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         left.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -88,6 +102,11 @@ public class Window extends JFrame implements ActionListener{
         keyNumber9 = new JButton();
         keyNumber0 = new JButton();
         keyNumber000 = new JButton();
+        keyEnter = new JButton("Enter");
+        keyDelete = new JButton("Delete");
+        keyClear = new JButton("Clear");
+        keyCancel = new JButton("Cancel");
+        keyCardtestonly = new JButton("Insert Card");
 
        keyLeft1 = new JButton();
        keyLeft2 = new JButton();
@@ -184,6 +203,31 @@ public class Window extends JFrame implements ActionListener{
         keyRight3.setBounds(25,270,50,50);
         keyRight3.addActionListener(this);
 
+        keyEnter.setBounds(250,60,100,50);
+        keyEnter.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyEnter.setFocusable(false);
+        keyEnter.addActionListener(this);
+
+        keyDelete.setBounds(250,130,100,50);
+        keyDelete.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyDelete.setFocusable(false);
+        keyDelete.addActionListener(this);
+
+        keyClear.setBounds(250,200,100,50);
+        keyClear.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyClear.setFocusable(false);
+        keyClear.addActionListener(this);
+
+        keyCancel.setBounds(250,270,100,50);
+        keyCancel.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyCancel.setFocusable(false);
+        keyCancel.addActionListener(this);
+
+        keyCardtestonly.setBounds(550,200,150,100);
+        keyCardtestonly.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyCardtestonly.setFocusable(false);
+        keyCardtestonly.addActionListener(this);
+
 
         this.setJMenuBar(Menubar);
         this.add(top, BorderLayout.NORTH);
@@ -205,7 +249,12 @@ public class Window extends JFrame implements ActionListener{
         keypad.add(keyNumber9);
         keypad.add(keyNumber0);
         keypad.add(keyNumber000);
+        keypad.add(keyEnter);
+        keypad.add(keyDelete);
+        keypad.add(keyClear);
+        keypad.add(keyCancel);
         bottom.add(keypad);
+        bottom.add(keyCardtestonly);
         center.add(State);
         center.add(ActionIn);
         center.add(ActionOut);
@@ -277,26 +326,25 @@ public class Window extends JFrame implements ActionListener{
         else if(e.getSource()==keyNumber000)
         {
         //    System.out.println("000");
-            //State.sendSignal(10);
-            State.insertCard(1111);
+            State.sendSignal(10);
+
         }
         else if(e.getSource()==keyLeft1)
         {
        //     System.out.println("Left1");
             //State.sendSignal(-1);
-            State.sendSignal(-7);
+            State.sendSignal(-1);
         }
         else if(e.getSource()==keyLeft2)
         {
          //   System.out.println("Left2");
             //State.sendSignal(-2);
-            State.sendSignal(-8);
+            State.sendSignal(-2);
         }
         else if(e.getSource()==keyLeft3)
         {
          //   System.out.println("Left3");
-            //State.sendSignal(-3);
-            State.sendSignal(-9);
+            State.sendSignal(-3);
         }
         else if(e.getSource()==keyRight1)
         {
@@ -313,11 +361,41 @@ public class Window extends JFrame implements ActionListener{
           //  System.out.println("Right3");
             State.sendSignal(-6);
         }
+        else if(e.getSource()==keyEnter)
+        {
+            //  System.out.println("Right3");
+            State.sendSignal(-7);
+        }
+        else if(e.getSource()==keyDelete)
+        {
+            //  System.out.println("Right3");
+            State.sendSignal(-8);
+        }
+        else if(e.getSource()==keyClear)
+        {
+            //  System.out.println("Right3");
+            State.sendSignal(-9);
+        }
+        else if(e.getSource()==keyCancel)
+        {
+            //  System.out.println("Right3");
+            State.sendSignal(-10);
+        }
+        else if(e.getSource()==keyCardtestonly)
+        {
+            if(keyCardtestonly.getText().equals("Insert Card"))
+            {
+                State.insertCard(0);
+                keyCardtestonly.setText("Remove Card");
+            }
+            else {
+                State.returnCard();
+                keyCardtestonly.setText("Insert Card");
+            }
+        }
         else if(e.getSource()==About)
         {
             JOptionPane.showMessageDialog(null,"ATM simulator v0.5.1.1","Info",JOptionPane.INFORMATION_MESSAGE);
         }
-
-
     }
 }

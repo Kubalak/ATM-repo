@@ -2,10 +2,17 @@ package com.company.user;
 
 class Account
 {
-    protected double value;
-    public Account(double value)
+    private double credit;
+    public Account(double credit)
     {
-        this.value = value;
+        this.credit = credit;
+    }
+    public double checkCredit(){return credit;}
+    public boolean changeCredit(double gap)
+    {
+        if(gap < 0.0 && credit + gap < 0.0)return false;
+       credit += gap;
+       return true;
     }
 
 }

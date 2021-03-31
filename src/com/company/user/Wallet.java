@@ -145,4 +145,8 @@ public class Wallet
         }
         return 0;
     }
+    public int getAll()
+    {
+        return tens * 10 + twenties * 20 + fifties * 50 + hundreds * 100 + two_hundreds * 200 + five_hundreds * 500;
+    }
 }
