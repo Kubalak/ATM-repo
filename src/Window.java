@@ -222,7 +222,7 @@ public class Window extends JFrame implements ActionListener{
         keyCancel.setFocusable(false);
         keyCancel.addActionListener(this);
 
-        keyCardtestonly.setBounds(550,200,150,100);
+        keyCardtestonly.setBounds(550,200,175,100);
         keyCardtestonly.setFont(new Font("Comic Sans",Font.BOLD,20));
         keyCardtestonly.setFocusable(false);
         keyCardtestonly.addActionListener(this);
@@ -382,13 +382,14 @@ public class Window extends JFrame implements ActionListener{
         }
         else if(e.getSource()==keyCardtestonly)
         {
-            if(keyCardtestonly.getText().equals("Insert Card"))
+            if(!State.isCardInserted())
             {
-                State.insertCard(0);
+                if(State.insertCard(0) == 0)
                 keyCardtestonly.setText("Remove Card");
             }
-            else {
-                State.returnCard();
+            else
+                {
+                if(State.returnCard() == 0)
                 keyCardtestonly.setText("Insert Card");
             }
         }

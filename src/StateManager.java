@@ -20,7 +20,7 @@ Zwracane kody:
 
 public class StateManager extends JPanel
 {
-    private String[] states = {"IDLE","INPUT","OUTPUT","PIN","SUMMARY","FINALIZE"};
+    private String[] states = {"IDLE","OUTPUT","INPUT","PIN","OP_SEL","SUMMARY","CREDIT"};
     private Vector<String> statesHistory;
     private String currentState;
     private int pinCode[];
@@ -39,10 +39,11 @@ public class StateManager extends JPanel
         statesHistory = new Vector(0);
         this.setPreferredSize(new Dimension(300,300));
         this.setLayout(null);
+        System.out.println("Insert card.");
     }
     public int insertCard(int cardNo)
     {
-        if(!isCardInserted&&(currentState.equals("INPUT")||currentState.equals("OUTPUT"))&&user.hasCard(cardNo))
+        if(!isCardInserted && user.hasCard(cardNo))
         {
             cardIndex = cardNo;
             isCardInserted = true;
@@ -53,15 +54,15 @@ public class StateManager extends JPanel
         }
         if(!user.hasCard(cardNo))System.out.println("Card check failed! Please insert another card.");
         if(isCardInserted) System.out.println("Card is already inserted!");
-        else if(!currentState.equals("INPUT")&&!currentState.equals("OUTPUT")) System.out.println("Card insertion is now not allowed!");
+        else if(!currentState.equals("INPUT")&&!currentState.equals("OUTPUT")) System.out.println("Card insertion is not allowed at the moment!");
         return -1;
     }
     public int returnCard()
     {
-        if(isCardInserted && currentState.equals("FINALIZE"))
+        if(isCardInserted && (currentState.equals("SUMMARY") || currentState.equals("ABORT") || currentState.equals("PIN") || currentState.equals("CREDIT")))
         {
             isCardInserted = false;
-            System.out.println("Card returned.");
+            System.out.println("Please take your card back.");
             return 0;
         }
         if(!isCardInserted) System.out.println("Card is not inserted!");
@@ -73,7 +74,7 @@ public class StateManager extends JPanel
        // if(stateChanged)System.out.println("State changede from "+statesHistory.elementAt(statesHistory.size()-1)+" to "+currentState);
       //  else System.out.println("State remains unchanged");
     }
-
+    public boolean isCardInserted(){return this.isCardInserted;}
     public void switchUser(User newUser)
     {
         user = newUser;
@@ -84,111 +85,64 @@ public class StateManager extends JPanel
         switch (currentState)
         {
             case "IDLE":
+                if(signal>=-10&&signal<=10)
+                    currentState = states[3];
+
+                break;
+            case "OP_SEL":
                 if(signal == -4)
                 {
                     statesHistory.add(currentState);
                     currentState = states[1];
                     returnCode = 0;
-                    System.out.println("Enter card.");
+                    System.out.println("You selected withdraw. Please select amount of money you wish to take");
                 }
                 else if(signal == -5)
                 {
                     statesHistory.add(currentState);
                     currentState = states[2];
                     returnCode = 0;
-                    System.out.println("Enter card.");
+                    System.out.println("You selected deposit. Please give me your money!");
+                }
+                else if(signal == -6)
+                {
+                    statesHistory.add(currentState);
+                    currentState = states[6];
+                    returnCode = 0;
+                    System.out.println("You selected current account state.");
                 }
                 else
                 {
                     System.out.println("Please select operation!");
                     returnCode = -1;
-                }
+                 }
                 break;
-            case "INPUT":
-            case "OUTPUT":
-                if( signal == -9)
+            case "CREDIT":
+                if(signal == -7)
                 {
+                    System.out.println("Your current credit is "+user.getCard(cardIndex).checkCredit()+" PLN");
+                    currentState = states [0];
+                    this.returnCard();
                     statesHistory.clear();
                     currentState = states[0];
-                    returnCode = 0;
-                }
-                else
-                {
-                    returnCode = -1;
-                }
-                break;
-            case "PIN":
-                if(signal>-1)
-                {
-                    if(pinIndex<4)
-                    {
-                        pinCode[pinIndex] = signal;
-                        System.out.print(signal);
-                        pinIndex++;
-                        returnCode = 0;
-                    }
-                    else
-                    {
-                        returnCode = -1;
-                    }
-                }
-                else if(signal == -7)
-                {
-                    if(pinIndex==4 && failsNo > 0)
-                    {
-                        int code  = 0;
-                        for(int i=0;i<4;i++)
-                        {
-                            code*=10;
-                            code += pinCode[i];
-
-                        }
-                        System.out.println("\nYou entered: "+ code);
-                        if(user.checkCard(0,code))
-                        {
-                            returnCode = 0;
-                            System.out.println("Success\nPlease select amount of money you wish to take.");
-                            currentState = states[4];
-                        }
-                        else {
-                            failsNo--;
-                            System.out.println("Failure! Number of trials remaining: " + failsNo);
-                            System.out.print("Enter PIN again:");
-                            pinIndex = 0;
-                            returnCode = -1;
-                        }
-                    }
-                    //Pin verify here
-                    else
-                    {
-                        returnCode = -1;
-                        if(failsNo == 0)
-                        {
-                            user.setBlockedCard(0);
-                            System.out.println("Card locked!");
-                        }
-                    }
-                }
-                else if(signal == -8)
-                {
-                    if(pinIndex>0)pinIndex--;
-                    else returnCode = -1;
-                }
-                else if (signal == -9)
-                {
-                    pinIndex = 0;
                     returnCode = 0;
                 }
                 else if(signal == -10)
                 {
+                    System.out.println("You aborted operation");
+                    currentState = "ABORT";
+                    this.returnCard();
                     statesHistory.clear();
                     currentState = states[0];
                     returnCode = 0;
-                    System.out.println("Operation Cancelled! Going back to IDLE");
                 }
                 break;
-            case "SUMMARY":
-                //tutaj operacja wyboru kwoty wpłaty/wypłaty
+
+            case "INPUT":
+                System.out.println("This operation is not supported right now.");
+                currentState = states[0];
+                break;
+            case "OUTPUT":
                 if(signal == -1 && !isOtherAmountSelected)
                 {
                     returnCode = user.withdraw(cardIndex,10.0)?0:-1;
@@ -197,6 +151,7 @@ public class StateManager extends JPanel
                         System.out.println("Withdraw success!");
                         statesHistory.add(currentState);
                         currentState = states[5];
+                        this.returnCard();
                     }
                     else System.out.println("Withdraw failed!\nPlease select another option.");
                 }
@@ -208,6 +163,7 @@ public class StateManager extends JPanel
                         System.out.println("Withdraw success!");
                         statesHistory.add(currentState);
                         currentState = states[5];
+                        this.returnCard();
                     }
                     else System.out.println("Withdraw failed!\nPlease select another option.");
                 }
@@ -219,6 +175,7 @@ public class StateManager extends JPanel
                         System.out.println("Withdraw success!");
                         statesHistory.add(currentState);
                         currentState = states[5];
+                        this.returnCard();
                     }
                     else System.out.println("Withdraw failed!\nPlease select another option.");
                 }
@@ -230,6 +187,7 @@ public class StateManager extends JPanel
                         System.out.println("Withdraw success!");
                         statesHistory.add(currentState);
                         currentState = states[5];
+                        this.returnCard();
                     }
                     else System.out.println("Withdraw failed!\nPlease select another option.");
                 }
@@ -241,6 +199,7 @@ public class StateManager extends JPanel
                         System.out.println("Withdraw success!");
                         statesHistory.add(currentState);
                         currentState = states[5];
+                        this.returnCard();
                     }
                     else System.out.println("Withdraw failed!\nPlease select another option.");
 
@@ -270,6 +229,7 @@ public class StateManager extends JPanel
                             System.out.println("Withdraw success!");
                             statesHistory.add(currentState);
                             currentState = states[5];
+                            this.returnCard();
                         }
                         else System.out.println("Withdraw failed!\nPlease select another option.");
                     }
@@ -286,9 +246,11 @@ public class StateManager extends JPanel
                     else if(signal == -10)
                     {
                         statesHistory.clear();
-                        currentState = states[0];
+                        currentState = "ABORT";
                         returnCode = 0;
+                        this.returnCard();
                         System.out.println("Operation Cancelled! Going back to IDLE");
+                        currentState = states[0];
                     }
                 }
                 else
@@ -296,15 +258,99 @@ public class StateManager extends JPanel
                     if(signal == -10)
                     {
                         statesHistory.clear();
-                        currentState = states[0];
+                        currentState = "ABORT";
                         returnCode = 0;
+                        this.returnCard();
+                        System.out.println("Operation Cancelled! Going back to IDLE");
+                        currentState = states[0];
                     }
 
 
                 }
                 break;
-            case "FINALIZE":
-                //tutaj operacja wyboru drukowania potwierdzenia
+            case "PIN":
+                if(signal>-1 && signal < 10)
+                {
+                    if(pinIndex<4)
+                    {
+                        pinCode[pinIndex] = signal;
+                        System.out.print(signal);
+                        pinIndex++;
+                        returnCode = 0;
+                    }
+                    else
+                    {
+                        returnCode = -1;
+                    }
+                }
+                else if(signal == -7)
+                {
+                    if(pinIndex == 4 && !user.isCardLocked(cardIndex))
+                    {
+                        int code  = 0;
+                        for(int i=0;i<4;i++)
+                        {
+                            code*=10;
+                            code += pinCode[i];
+
+                        }
+                        System.out.println("\nYou entered: "+ code);
+                        if(user.checkCard(0,code))
+                        {
+                            returnCode = 0;
+                            System.out.println("Success\nPlease select operation.");
+                            pinIndex = 0;
+                            currentState = states[4];
+                        }
+                        else {
+                            failsNo--;
+                            if(failsNo == 0)
+                            {
+                                user.setBlockedCard(cardIndex);
+                                System.out.println("Card locked!");
+                            }
+                            else {
+                                System.out.println("Failure! Number of trials remaining: " + failsNo);
+                                System.out.print("Enter PIN again:");
+                                pinIndex = 0;
+                            }
+                            returnCode = -1;
+
+                        }
+                    }
+                    //Pin verify here
+                    else
+                    {
+                        returnCode = -1;
+                        if(user.isCardLocked(cardIndex))
+                        {
+                            System.out.println("Card locked!");
+                        }
+                    }
+                }
+                else if(signal == -8)
+                {
+                    if(pinIndex>0)pinIndex--;
+                    else returnCode = -1;
+                }
+                else if (signal == -9)
+                {
+                    pinIndex = 0;
+                    returnCode = 0;
+                }
+                else if(signal == -10)
+                {
+                    statesHistory.clear();
+                    currentState = "ABORT";
+                    pinIndex = 0;
+                    returnCode = 0;
+                    this.returnCard();
+                    System.out.println("Operation Cancelled! Going back to IDLE");
+                    currentState = states[0];
+                }
+                break;
+            case "SUMMARY":
+                 //tutaj operacja wyboru drukowania potwierdzenia
                 if(signal == -4) {
                     System.out.println("Printing confirmation...");
                     System.out.println("Actual account credit is " + user.getCard(cardIndex).checkCredit() + " PLN");

@@ -59,5 +59,10 @@ public class User
         if(CardNo>=cards.length )return null;
         return cards[CardNo];
     }
+    public boolean isCardLocked(int CardNo)
+    {
+        if(CardNo>=cards.length)return true;
+         return cards[CardNo].isLocked();
+    }
 
 }
