@@ -6,7 +6,7 @@ Created classes:<br>
 <b>`User`</b> that stores user details including his name and surname also user cards are stored in here.<br>
 <b>`Wallet`</b> that stores banknotes and the amount of them.<br>
 <b>`CreditCard`</b> that stores card info such as PIN code and information about a lock on the card.<br>
-<b>`Account`<br> that stores information about account balance</b>
+<b>`Account`</b> that stores information about account balance</b>
 <br>
 ## New functions:<br>
 Money withdrawal.<br>
