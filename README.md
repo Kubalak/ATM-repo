@@ -3,10 +3,10 @@ Atm project repository currently v0.5.1.1
 
 # Changelog v0.5.1.1
 Created classes:<br>
-<b>User</b> that stores user details including his name and surname also user cards are stored in here.<br>
-<b>Wallet</b> that stores banknotes and the amount of them.<br>
-<b>CreditCard</b> that stores card info such as PIN code and information about a lock on the card.<br>
-<b>Account<br> that stores information about account balance</b>
+<b style="font-size:1.5em;">User</b> that stores user details including his name and surname also user cards are stored in here.<br>
+<b style="font-size:1.5em;">Wallet</b> that stores banknotes and the amount of them.<br>
+<b style="font-size:1.5em;">CreditCard</b> that stores card info such as PIN code and information about a lock on the card.<br>
+<b style="font-size:1.5em;">Account<br> that stores information about account balance</b>
 <br>
 ## New functions:<br>
 Money withdrawal.<br>
