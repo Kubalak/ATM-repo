@@ -4,7 +4,7 @@ Atm project repository currently v0.5.1.1
 # Changelog v0.5.2.0
 Users and their data are now stored in `userdata/settings.xml` file.<br/>
 Loading and saving in XML format is now supported.<br/>
-Changes in user data are saved by using the MenuBar.<br/>
+Changes in user data are saved by using the MenuBar <b>Save</b> option.<br/>
 
 ## Tweaks:
 In the `User` class some fields have been renamed.<br/>
