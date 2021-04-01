@@ -6,7 +6,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
 
 
 public class Window extends JFrame implements ActionListener{
@@ -16,22 +20,13 @@ public class Window extends JFrame implements ActionListener{
     JButton keyEnter, keyDelete, keyClear,keyCancel,keyCardtestonly;
     JMenuBar Menubar;
     JMenu Help;
-    JMenuItem About;
+    JMenuItem About,Save,Load;
     JButton keyLeft2, keyLeft3, keyRight1,keyRight2,keyRight3;
     JLabel ActionIn, ActionOut;
     StateManager State;
     User[] users;
-    Window(){
-        CreditCard[] cards = new CreditCard[1];
-        cards[0] = new CreditCard(1234,1000.0);
-        users = new User[1];
-        users[0] = new User("Jan","Kowalski");
-        users[0].addCards(cards);
-        Wallet wallet = new Wallet();
-        wallet.cash_in("10",3);
-        wallet.cash_in("20",2);
-        wallet.cash_in("200",1);
-        users[0].setWallet(wallet);
+    Window()
+    {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(800,900);
         this.setResizable(false);
@@ -41,11 +36,40 @@ public class Window extends JFrame implements ActionListener{
         Menubar.setBounds(0,0,800,25);
         Help = new JMenu("Help");
         About = new JMenuItem("About");
+        Save = new JMenuItem("Save");
+        Load = new JMenuItem("Load");
+        Load.addActionListener(this);
+        Save.addActionListener(this);
         About.addActionListener(this);
+        Help.add(Load);
+        Help.add(Save);
         Help.add(About);
         Menubar.add(Help);
-        State = new StateManager(users[0]);
-
+        try {
+            File input = new File("userdata/settings.xml");
+            Scanner  reader = new Scanner(input);
+            String data = "";
+            while(reader.hasNextLine())
+            {
+                data += reader.nextLine();
+            }
+            reader.close();
+            data = User.alter(data);
+            data = CreditCard.getData(data,"<users>","</users>");
+            int ANumberOfUsers = CreditCard.countOccurrence(data,"<user>");
+            users = new User[ANumberOfUsers];
+            for(int i=0;i<ANumberOfUsers;i++)
+            {
+                users[i] = User.getFromXML(data);
+                data = User.moveToNext(data);
+            }
+            State = new StateManager(users[0]);
+        }
+        catch(NullPointerException | FileNotFoundException exception)
+        {
+            System.out.println("Cannot open file!");
+            System.exit(1);
+        }
         JPanel top = new JPanel();
         JPanel left = new JPanel();
         JPanel right = new JPanel();
@@ -395,7 +419,30 @@ public class Window extends JFrame implements ActionListener{
         }
         else if(e.getSource()==About)
         {
-            JOptionPane.showMessageDialog(null,"ATM simulator v0.5.1.1","Info",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,"ATM simulator v0.5.2.0","Info",JOptionPane.INFORMATION_MESSAGE);
+        }
+        else if(e.getSource()==Save)
+        {
+            try
+            {
+                FileWriter writer = new FileWriter("userdata/settings.xml");
+                writer.write("<?xml version=\"1.0\"?>\n<users>\n");
+                if(users != null)
+                for(int i=0;i<users.length;++i)if(users[i] != null)writer.write(users[i].toXML("   ","   "));
+                else writer.write("null");
+                writer.write("</users>");
+                writer.close();
+                System.out.println("Save success");
+            }
+            catch(IOException exception)
+            {
+                System.out.println("Save failed!");
+            }
+        }
+        else if(e.getSource()==Load)
+        {
+            System.out.println("Hontoni argiato!");
+
         }
     }
 }

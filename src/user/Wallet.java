@@ -149,4 +149,41 @@ public class Wallet
     {
         return tens * 10 + twenties * 20 + fifties * 50 + hundreds * 100 + two_hundreds * 200 + five_hundreds * 500;
     }
+    public String toXML(String margin, String spacer)
+    {
+        String result = margin+"<wallet>\n";
+        result+=margin+spacer+"<tens>"+tens+"</tens>\n";
+        result+=margin+spacer+"<twenties>"+twenties+"</twenties>\n";
+        result+=margin+spacer+"<fifties>"+fifties+"</fifties>\n";
+        result+=margin+spacer+"<hundreds>"+hundreds+"</hundreds>\n";
+        result+=margin+spacer+"<twohundreds>"+two_hundreds+"</twohundreds>\n";
+        result+=margin+spacer+"<fivehundreds>"+five_hundreds+"</fivehundreds>\n";
+        result+=margin+"</wallet>\n";
+        return result;
+    }
+    public static Wallet getFromXML(String data)
+    {
+        String tens,twenties,fifties,hundreds,two_hundreds,five_hundreds;
+        tens = CreditCard.getData(data,"<tens>","</tens>");
+        twenties = CreditCard.getData(data,"<twenties>","</twenties>");
+        fifties = CreditCard.getData(data,"<fifties>","</fifties>");
+        hundreds = CreditCard.getData(data,"<hundreds>","</hundreds>");
+        two_hundreds = CreditCard.getData(data,"<twohundreds>","</twohundreds>");
+        five_hundreds = CreditCard.getData(data,"<fivehundreds>","</fivehundreds>");
+        try{
+            Wallet result = new Wallet();
+            result.tens = Integer.parseInt(tens);
+            result.twenties = Integer.parseInt(twenties);
+            result.fifties = Integer.parseInt(fifties);
+            result.hundreds = Integer.parseInt(hundreds);
+            result.two_hundreds = Integer.parseInt(two_hundreds);
+            result.five_hundreds = Integer.parseInt(five_hundreds);
+            return result;
+        }
+        catch(NumberFormatException exception)
+        {
+            System.out.println("Data is corrupted!");
+        }
+        return null;
+    }
 }
