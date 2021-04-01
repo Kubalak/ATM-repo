@@ -1,5 +1,5 @@
 # ATM-repo
-Atm project repository currently v0.5.1.1
+Atm project repository currently v0.5.2.0
 
 # Changelog v0.5.2.0
 Users and their data are now stored in `userdata/settings.xml` file.<br/>
