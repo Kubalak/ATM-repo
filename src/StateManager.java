@@ -26,7 +26,7 @@ public class StateManager extends JPanel
     private String currentState;
     private int pinCode[];
     private int pinIndex, failsNo,moneyToBurn;
-    private boolean isCardInserted,stateChanged,isOtherAmountSelected;
+    private boolean isCardInserted,stateChanged,isOtherAmountSelected,isReadyToProceed;
     public String currency;
     private User user;
     private JLabel LeftTop,LeftMiddle,LeftBottom,Top,Center,RightTop,RightMiddle,RightBottom;
@@ -67,15 +67,15 @@ public class StateManager extends JPanel
         RightBottom.setHorizontalTextPosition(SwingConstants.RIGHT);
         RightBottom.setHorizontalAlignment(SwingConstants.RIGHT);
 
-        Top = new JLabel("");
+        Top = new JLabel("Please insert card...");
         Top.setFont(new Font("Comic Sans MS",Font.PLAIN,20));
-        Top.setBounds(200,100,200,30);
+        Top.setBounds(150,100,300,30);
         Top.setHorizontalTextPosition(SwingConstants.CENTER);
         Top.setHorizontalAlignment(SwingConstants.CENTER);
 
-        Center = new JLabel("Please insert card...");
+        Center = new JLabel("");
         Center.setFont(new Font("Comic Sans MS",Font.PLAIN,20));
-        Center.setBounds(200,230,200,30);
+        Center.setBounds(170,230,260,30);
         Center.setHorizontalTextPosition(SwingConstants.CENTER);
         Center.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -85,6 +85,7 @@ public class StateManager extends JPanel
         isOtherAmountSelected = false;
         currentState = states[0];
         stateChanged = false;
+        isReadyToProceed = false;
         statesHistory = new Vector(0);
 
         this.add(LeftTop);
@@ -98,6 +99,7 @@ public class StateManager extends JPanel
         this.repaint();
         System.out.println("Insert card.");
     }
+    public String getCurrentState(){return currentState;}
     public int insertCard()
     {
         if(!isCardInserted && currentState.equals("IDLE"))
@@ -113,6 +115,11 @@ public class StateManager extends JPanel
         else if(!currentState.equals("INPUT")&&!currentState.equals("OUTPUT")) System.out.println("Card insertion is not allowed at the moment!");
         else System.out.println("Card insertion is now not allowed!");
         return -1;
+    }
+    private boolean deposit(Wallet cash)
+    {
+        if(!currentState.equals("INPUT"))return false;
+        return user.deposit(cash);
     }
     private int returnCard()
     {
@@ -133,8 +140,8 @@ public class StateManager extends JPanel
             LeftTop.setText("");
             LeftMiddle.setText("");
             LeftBottom.setText("");
-            Top.setText("");
-            Center.setText("Please insert card...");
+            Top.setText("Please insert card...");
+            Center.setText("");
             RightTop.setText("");
            RightMiddle.setText("");
            RightBottom.setText("");
@@ -212,6 +219,18 @@ public class StateManager extends JPanel
            RightMiddle.setText("");
            RightBottom.setText("No");
        }
+       else if(currentState.equals("INPUT"))
+       {
+           LeftTop.setText("");
+           LeftMiddle.setText("");
+           LeftBottom.setText("");
+           Top.setText("Put your banknotes into deposit");
+           Center.setText("slot and press ENTER");
+           RightTop.setText("");
+           RightMiddle.setText("");
+           RightBottom.setText("");
+
+       }
 
         this.repaint();
     }
@@ -220,15 +239,12 @@ public class StateManager extends JPanel
     {
         user = newUser;
     }
-    public int sendSignal(int signal)
+    public int sendSignal(int signal, Wallet base)
     {
         int returnCode = -2;
         switch (currentState)
         {
             case "IDLE":
-                if(signal>=-10&&signal<=10)
-                    currentState = states[3];
-
                 break;
             case "OP_SEL":
                 if(signal == -4)
@@ -279,8 +295,18 @@ public class StateManager extends JPanel
                 break;
 
             case "INPUT":
-                System.out.println("This operation is not supported right now.");
-                currentState = states[0];
+                if(signal==-7)
+                {
+                    if(deposit(base))
+                    {
+                        returnCode = 0;
+                        currentState = "SUMMARY";
+                    }
+                    else
+                    {
+                        returnCode = -1;
+                    }
+                }
                 break;
             case "OUTPUT":
                 if(signal == -1 && !isOtherAmountSelected)
@@ -289,9 +315,6 @@ public class StateManager extends JPanel
                     if(returnCode==0)
                     {
                         System.out.println("Withdraw success!");
-                        Wallet wallet =  user.getWallet();
-                        wallet.cashIn(10);
-                        user.setWallet(wallet);
                         statesHistory.add(currentState);
                         currentState = states[5];
                         this.returnCard();
@@ -304,9 +327,6 @@ public class StateManager extends JPanel
                     if(returnCode==0)
                     {
                         System.out.println("Withdraw success!");
-                        Wallet wallet =  user.getWallet();
-                        wallet.cashIn(20);
-                        user.setWallet(wallet);
                         statesHistory.add(currentState);
                         currentState = states[5];
                         this.returnCard();
@@ -319,9 +339,6 @@ public class StateManager extends JPanel
                     if(returnCode==0)
                     {
                         System.out.println("Withdraw success!");
-                        Wallet wallet =  user.getWallet();
-                        wallet.cashIn(50);
-                        user.setWallet(wallet);
                         statesHistory.add(currentState);
                         currentState = states[5];
                         this.returnCard();
@@ -334,9 +351,6 @@ public class StateManager extends JPanel
                     if(returnCode==0)
                     {
                         System.out.println("Withdraw success!");
-                        Wallet wallet =  user.getWallet();
-                        wallet.cashIn(100);
-                        user.setWallet(wallet);
                         statesHistory.add(currentState);
                         currentState = states[5];
                         this.returnCard();
@@ -349,9 +363,6 @@ public class StateManager extends JPanel
                     if(returnCode==0)
                     {
                         System.out.println("Withdraw success!");
-                        Wallet wallet =  user.getWallet();
-                        wallet.cashIn(200);
-                        user.setWallet(wallet);
                         statesHistory.add(currentState);
                         currentState = states[5];
                         this.returnCard();
@@ -383,9 +394,6 @@ public class StateManager extends JPanel
                         if(returnCode==0)
                         {
                             System.out.println("Withdraw success!");
-                            Wallet wallet =  user.getWallet();
-                            wallet.cashIn(moneyToBurn);
-                            user.setWallet(wallet);
                             statesHistory.add(currentState);
                             currentState = states[5];
                             this.returnCard();

@@ -16,7 +16,7 @@ public class User
         this.Name = Name;
         this.Surname = Surname;
         cards = null;
-        wallet = new Wallet();
+        wallet = new Wallet(false);
     }
     public void addCards(CreditCard[] creditCards)
     {
@@ -29,7 +29,6 @@ public class User
     }
     public void setWallet(Wallet newWallet)
     {
-
         this.wallet = newWallet;
     }
     public boolean switchCard(int CardNO)
@@ -37,10 +36,6 @@ public class User
         if(CardNO>=ANumberOfCards )return false;
         currentCard = CardNO;
         return true;
-    }
-    public boolean hasCard(int CardNo)
-    {
-        return CardNo < cards.length;
     }
     public boolean checkCard(int PIN)
     {
@@ -57,7 +52,15 @@ public class User
     public boolean withdraw(double value)
     {
         if(value < 0.0)return false;
-        return cards[currentCard].changeCredit(-value);
+        boolean OK = cards[currentCard].changeCredit(-value);
+        if(OK)  wallet.cashIn((int)value);
+        return OK;
+    }
+    public boolean deposit (Wallet cash)
+    {
+        if(!wallet.letTake(cash))return false;
+        cards[currentCard].changeCredit(wallet.take(cash));
+        return true;
     }
     public CreditCard getCard()
     {

@@ -1,4 +1,3 @@
-import user.CreditCard;
 import user.User;
 import user.Wallet;
 import xml.XMLTools;
@@ -16,16 +15,19 @@ import java.util.Scanner;
 
 public class Window extends JFrame implements ActionListener{
 
-   private JButton keyNumber1, keyNumber2, keyNumber3, keyNumber4, keyNumber5, keyNumber6;
-   private JButton keyNumber7, keyNumber8, keyNumber9, keyNumber0, keyNumber000, keyLeft1;
-   private JButton keyEnter, keyDelete, keyClear,keyCancel,keyCardtestonly;
-   private JMenuBar Menubar;
-   private JMenu Help,MUser;
-   private JMenuItem About,Save,Load,SwitchUser,SwitchCard;
-   private JButton keyLeft2, keyLeft3, keyRight1,keyRight2,keyRight3;
+   private final JButton keyNumber1, keyNumber2, keyNumber3, keyNumber4, keyNumber5, keyNumber6;
+   private final JButton keyNumber7, keyNumber8, keyNumber9, keyNumber0, keyNumber000, keyLeft1;
+   private final JButton keyEnter, keyDelete, keyClear,keyCancel,keyCardtestonly;
+   private final JButton [] WalletOps;
+   private final JLabel [] WLabels;
+   private final JMenuBar Menubar;
+   private final JMenu Help,MUser;
+   private final JMenuItem About,Save,Load,SwitchUser,SwitchCard;
+   private final JButton keyLeft2, keyLeft3, keyRight1,keyRight2,keyRight3;
    private StateManager State;
    private int currentUser,ANumberOfUsers;
    private String currency;
+   private Wallet operational,temporary;
    private User[] users;
    private void saveState()
    {
@@ -104,6 +106,8 @@ public class Window extends JFrame implements ActionListener{
             System.out.println(exception.getMessage());
             System.exit(1);
         }
+        operational = new Wallet(true);
+        temporary = users[currentUser].getWallet();
         JPanel top = new JPanel();
         JPanel left = new JPanel();
         JPanel right = new JPanel();
@@ -152,6 +156,29 @@ public class Window extends JFrame implements ActionListener{
         keyNumber9 = new JButton();
         keyNumber0 = new JButton();
         keyNumber000 = new JButton();
+        WalletOps = new JButton[12];
+        WLabels = new JLabel[12];
+        for(int i=0;i<12;i++)
+        {
+            WalletOps[i] = new JButton();
+            WalletOps[i].setBounds(600 + i%2*40,150 + 40 * (i / 2) ,30,30);
+            WalletOps[i].setFont(new Font("Comic Sans",Font.PLAIN,5));
+            WalletOps[i].setFocusable(false);
+            WalletOps[i].addActionListener(this);
+
+            WLabels[i] = new JLabel("x0");
+            WLabels[i].setFont(new Font("Comic Sans",Font.BOLD,15));
+            WLabels[i].setBounds(575 + i%2*105,150+ 40 * (i / 2) ,60,30);
+            if(i%2==1)WLabels[i].setHorizontalTextPosition(SwingConstants.RIGHT);
+        }
+
+        WLabels[0].setText("x"+temporary.getAmount("10"));
+        WLabels[2].setText("x"+temporary.getAmount("20"));
+        WLabels[4].setText("x"+temporary.getAmount("50"));
+        WLabels[6].setText("x"+temporary.getAmount("100"));
+        WLabels[8].setText("x"+temporary.getAmount("200"));
+        WLabels[10].setText("x"+temporary.getAmount("500"));
+
         keyEnter = new JButton("Enter");
         keyDelete = new JButton("Delete");
         keyClear = new JButton("Clear");
@@ -272,7 +299,7 @@ public class Window extends JFrame implements ActionListener{
         keyCancel.setFocusable(false);
         keyCancel.addActionListener(this);
 
-        keyCardtestonly.setBounds(550,200,175,100);
+        keyCardtestonly.setBounds(550,40,175,100);
         keyCardtestonly.setFont(new Font("Comic Sans",Font.BOLD,20));
         keyCardtestonly.setFocusable(false);
         keyCardtestonly.addActionListener(this);
@@ -294,6 +321,11 @@ public class Window extends JFrame implements ActionListener{
         keypad.add(keyCancel);
         bottom.add(keypad);
         bottom.add(keyCardtestonly);
+        for(int i=0;i<12;i++)
+        {
+            bottom.add(WalletOps[i]);
+            bottom.add(WLabels[i]);
+        }
         center.add(State);
 
         left.add(keyLeft1);
@@ -318,27 +350,27 @@ public class Window extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        if(e.getSource()==keyNumber0)State.sendSignal(0);
-        else if(e.getSource()==keyNumber1)State.sendSignal(1);
-        else if(e.getSource()==keyNumber2)State.sendSignal(2);
-        else if(e.getSource()==keyNumber3)State.sendSignal(3);
-        else if(e.getSource()==keyNumber4)State.sendSignal(4);
-        else if(e.getSource()==keyNumber5)State.sendSignal(5);
-        else if(e.getSource()==keyNumber6)State.sendSignal(6);
-        else if(e.getSource()==keyNumber7)State.sendSignal(7);
-        else if(e.getSource()==keyNumber8)State.sendSignal(8);
-        else if(e.getSource()==keyNumber9)State.sendSignal(9);
-        else if(e.getSource()==keyNumber000)State.sendSignal(10);
-        else if(e.getSource()==keyLeft1)State.sendSignal(-1);
-        else if(e.getSource()==keyLeft2)State.sendSignal(-2);
-        else if(e.getSource()==keyLeft3)State.sendSignal(-3);
-        else if(e.getSource()==keyRight1)State.sendSignal(-4);
-        else if(e.getSource()==keyRight2)State.sendSignal(-5);
-        else if(e.getSource()==keyRight3)State.sendSignal(-6);
-        else if(e.getSource()==keyEnter)State.sendSignal(-7);
-        else if(e.getSource()==keyDelete)State.sendSignal(-8);
-        else if(e.getSource()==keyClear)State.sendSignal(-9);
-        else if(e.getSource()==keyCancel)State.sendSignal(-10);
+        if(e.getSource()==keyNumber0)State.sendSignal(0,operational);
+        else if(e.getSource()==keyNumber1)State.sendSignal(1,operational);
+        else if(e.getSource()==keyNumber2)State.sendSignal(2,operational);
+        else if(e.getSource()==keyNumber3)State.sendSignal(3,operational);
+        else if(e.getSource()==keyNumber4)State.sendSignal(4,operational);
+        else if(e.getSource()==keyNumber5)State.sendSignal(5,operational);
+        else if(e.getSource()==keyNumber6)State.sendSignal(6,operational);
+        else if(e.getSource()==keyNumber7)State.sendSignal(7,operational);
+        else if(e.getSource()==keyNumber8)State.sendSignal(8,operational);
+        else if(e.getSource()==keyNumber9)State.sendSignal(9,operational);
+        else if(e.getSource()==keyNumber000)State.sendSignal(10,operational);
+        else if(e.getSource()==keyLeft1)State.sendSignal(-1,operational);
+        else if(e.getSource()==keyLeft2)State.sendSignal(-2,operational);
+        else if(e.getSource()==keyLeft3)State.sendSignal(-3,operational);
+        else if(e.getSource()==keyRight1)State.sendSignal(-4,operational);
+        else if(e.getSource()==keyRight2)State.sendSignal(-5,operational);
+        else if(e.getSource()==keyRight3)State.sendSignal(-6,operational);
+        else if(e.getSource()==keyEnter)State.sendSignal(-7,operational);
+        else if(e.getSource()==keyDelete)State.sendSignal(-8,operational);
+        else if(e.getSource()==keyClear)State.sendSignal(-9,operational);
+        else if(e.getSource()==keyCancel)State.sendSignal(-10,operational);
         else if(e.getSource()==keyCardtestonly)
         {
             if(!State.isCardInserted())
@@ -362,8 +394,42 @@ public class Window extends JFrame implements ActionListener{
         {
             System.out.println("Hontoni argiato!");
         }
-        if(State.isCardInserted()) keyCardtestonly.setEnabled(false);
-        else  keyCardtestonly.setEnabled(true);
+        else if(e.getSource()==SwitchUser)
+        {
+
+        }
+        else if(e.getSource()==SwitchCard)
+        {
+
+        }
+        else
+        {
+            String [] nominals={"10","20","50","100","200","500"};
+            for(int i=0;i<12;i++)
+            {
+                if(e.getSource()==WalletOps[i]) {
+                    switch (i % 2)
+                    {
+                        case 0:
+                            if (temporary.cashOut(nominals[i / 2], 1)) operational.cashIn(nominals[i / 2], 1);
+                            WLabels[i].setText("x" + temporary.getAmount(nominals[i / 2]));
+                            WLabels[i + 1].setText("x" + operational.getAmount(nominals[i / 2]));
+                            break;
+                        case 1:
+                            if (operational.cashOut(nominals[i / 2], 1)) temporary.cashIn(nominals[i / 2], 1);
+                            WLabels[i - 1].setText("x" + temporary.getAmount(nominals[i / 2]));
+                            WLabels[i].setText("x" + operational.getAmount(nominals[i / 2]));
+                            break;
+                    }
+                    break;
+                }
+            }
+        }
+        if(!State.getCurrentState().equals("INPUT")) {
+            temporary = users[currentUser].getWallet();
+            operational.cashOut(operational.getAll());
+        }
+        keyCardtestonly.setEnabled(!State.isCardInserted());
         saveState();
         this.repaint();
     }

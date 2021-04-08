@@ -3,13 +3,15 @@ package user;
 import xml.XMLTools;
 
 import java.util.Locale;
+import java.util.Random;
 
 public class Wallet
 {
     private int tens,twenties,fifties,hundreds,two_hundreds,five_hundreds;
-    public Wallet()
+    public Wallet(boolean empty)
     {
-        tens = twenties = fifties = hundreds = two_hundreds = five_hundreds = 1;
+        if(empty) tens = twenties = fifties = hundreds = two_hundreds = five_hundreds = 0;
+        else tens = twenties = fifties = hundreds = two_hundreds = five_hundreds = 1;
     }
     public Wallet(int cash)
     {
@@ -27,7 +29,7 @@ public class Wallet
         tens = cash / 10;
 
     }
-    public void cash_in(String what, int amount)
+    public void cashIn(String what, int amount)
     {
         if(amount<0||what==null)System.out.println("Operation not permitted!");
         else if(what.toLowerCase().equals("10"))tens+=amount;
@@ -102,18 +104,18 @@ public class Wallet
         return 0;
     }
 
-    public int cashOut(String what, int amount)
+    public boolean cashOut(String what, int amount)
     {
         if(amount<0||what==null){
             System.out.println("Operation not permitted!");
-            return -1;
+            return false;
         }
         else if(what.toLowerCase().equals("10"))
         {
             if(amount>tens)
             {
                 System.out.println("Not enough money!");
-                return -1;
+                return false;
             }
             tens-=amount;
         }
@@ -121,7 +123,7 @@ public class Wallet
             if(amount>twenties)
             {
                 System.out.println("Not enough money!");
-                return -1;
+                return false;
             }
             twenties -= amount;
         }
@@ -129,7 +131,7 @@ public class Wallet
             if(amount>fifties)
             {
                 System.out.println("Not enough money!");
-                return -1;
+                return false;
             }
             fifties-=amount;
         }
@@ -137,7 +139,7 @@ public class Wallet
             if(amount>hundreds)
             {
                 System.out.println("Not enough money!");
-                return -1;
+                return false;
             }
             hundreds-=amount;
         }
@@ -145,7 +147,7 @@ public class Wallet
             if(amount>two_hundreds)
             {
                 System.out.println("Not enough money!");
-                return -1;
+                return false;
             }
             two_hundreds-=amount;
         }
@@ -153,20 +155,47 @@ public class Wallet
             if(amount>five_hundreds)
             {
                 System.out.println("Not enough money!");
-                return -1;
+                return false;
             }
             five_hundreds-=amount;
         }
         else {
             System.out.println("No banknote available!");
-            return -1;
+            return false;
         }
-        return 0;
+        return true;
+    }
+    public int getAmount(String what)
+    {
+         if(what.toLowerCase().equals("10"))  return tens;
+        else if(what.toLowerCase().equals("20"))return twenties;
+        else if(what.toLowerCase().equals("50"))return fifties;
+        else if(what.toLowerCase().equals("100"))return hundreds;
+        else if(what.toLowerCase().equals("200"))return  two_hundreds;
+        else if(what.toLowerCase().equals("500"))return five_hundreds;
+        System.out.println("No banknote available!");
+        return -1;
     }
     public int getAll()
     {
         return tens * 10 + twenties * 20 + fifties * 50 + hundreds * 100 + two_hundreds * 200 + five_hundreds * 500;
     }
+    public boolean letTake(Wallet outcome)
+    {
+        return outcome.tens > tens || outcome.twenties > twenties || outcome.fifties > fifties || outcome.hundreds > hundreds || outcome.two_hundreds > two_hundreds || outcome.five_hundreds > five_hundreds;
+    }
+    public int take(Wallet outcome)
+    {
+        if(!this.letTake(outcome))return -1;
+        tens -= outcome.tens;
+        twenties -= outcome.twenties;
+        fifties -= outcome.fifties;
+        hundreds -= outcome.hundreds;
+        two_hundreds -= outcome.two_hundreds;
+        five_hundreds -= outcome.five_hundreds;
+        return outcome.getAll();
+    }
+
     public String toXML(String margin, String spacer)
     {
         String result = margin+"<wallet>\n";
@@ -189,7 +218,7 @@ public class Wallet
         two_hundreds = XMLTools.getData(data,"<twohundreds>","</twohundreds>");
         five_hundreds = XMLTools.getData(data,"<fivehundreds>","</fivehundreds>");
         try{
-            Wallet result = new Wallet();
+            Wallet result = new Wallet(true);
             result.tens = Integer.parseInt(tens);
             result.twenties = Integer.parseInt(twenties);
             result.fifties = Integer.parseInt(fifties);
