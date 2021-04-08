@@ -17,7 +17,7 @@ This change is made due to the fact that deposit function needs a `Wallet` class
 
 ## New functions:
 User can set manually withdraw value.<br>
-User can now deposit money <u><i>work in progress</i></u>.
+User can now deposit money <b><i>work in progress</i></b>.
 
 # Changelog v0.5.2.0
 Users and their data are now stored in `userdata/settings.xml` file.<br/>
