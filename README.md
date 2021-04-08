@@ -11,10 +11,13 @@ Information about ongoing operation are now shown on the <b>center</b> `JPanel`<
 ## Tweaks
 Changed behaviour while trying to insert card that is already inserted.<br>
 Machine state is saved after every user action.<br>
-Created class `XMLTools` that provide basic XML utilities.
+Created class `XMLTools` that provide basic XML utilities.<br>
+`StateManager` now needs two arguments in <i>sendSignal</i> function.<br>
+This change is made due to the fact that deposit function needs a `Wallet` class object.
 
 ## New functions:
 User can set manually withdraw value.<br>
+User can now deposit money <i>work in progress</i>.
 
 # Changelog v0.5.2.0
 Users and their data are now stored in `userdata/settings.xml` file.<br/>
