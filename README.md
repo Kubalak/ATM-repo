@@ -1,5 +1,20 @@
 # ATM-repo
-Atm project repository currently v0.5.2.0
+Atm project repository currently v0.5.3.1
+
+# Changelog v0.5.3.1
+It is now possible to work with different user / card however you have to change it manually in the `userdata/settings.xml`.<br/>
+Current user name and surname are displayed int the title of the window<br>
+Information about ongoing operation are now shown on the <b>center</b> `JPanel`<br>
+`settings.xml` now stores information about the currency of the machine.<br>
+
+## Tweaks
+Changed behaviour while trying to insert card that is already inserted.<br>
+Machine state is saved after every user action.<br>
+Created class `XMLTools` that provide basic XML utilities.
+
+## New functions:
+Checking account balance.<br>
+User can set manually withdraw value.<br>
 
 # Changelog v0.5.2.0
 Users and their data are now stored in `userdata/settings.xml` file.<br/>
