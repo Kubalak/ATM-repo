@@ -1,11 +1,14 @@
 package user;
 
+import xml.XMLTools;
+
 import java.util.Arrays;
 
 public class User
 {
-    private String Name,Surname;
+    public final String Name,Surname;
     private Wallet wallet;
+    private int currentCard,ANumberOfCards;
     private CreditCard[] cards;
 
     public User(String Name, String Surname)
@@ -26,44 +29,43 @@ public class User
     }
     public void setWallet(Wallet newWallet)
     {
+
         this.wallet = newWallet;
+    }
+    public boolean switchCard(int CardNO)
+    {
+        if(CardNO>=ANumberOfCards )return false;
+        currentCard = CardNO;
+        return true;
     }
     public boolean hasCard(int CardNo)
     {
         return CardNo < cards.length;
     }
-    public boolean checkCard(int CardNo, int PIN)
+    public boolean checkCard(int PIN)
     {
-        if(CardNo >= cards.length)return false;
-        return cards[CardNo].verifyPIN(PIN);
+        return cards[currentCard].verifyPIN(PIN);
     }
-    public boolean setBlockedCard(int CardNo)
+    public void blockCard()
     {
-        if(CardNo>=cards.length)return false;
-        cards[CardNo].lock();
-        return true;
+        cards[currentCard].lock();
     }
-    public boolean setUnblockedCard(int CardNo)
+    public void unlockCard()
     {
-        if(CardNo>=cards.length)return false;
-        cards[CardNo].unlock();
-        return true;
+        cards[currentCard].unlock();
     }
-    public boolean withdraw(int CardNo,double value)
+    public boolean withdraw(double value)
     {
-        if(CardNo>=cards.length || value < 0.0)return false;
-        return cards[CardNo].changeCredit(-value);
-
+        if(value < 0.0)return false;
+        return cards[currentCard].changeCredit(-value);
     }
-    public CreditCard getCard(int CardNo)
+    public CreditCard getCard()
     {
-        if(CardNo>=cards.length )return null;
-        return cards[CardNo];
+        return cards[currentCard];
     }
-    public boolean isCardLocked(int CardNo)
+    public boolean isCardLocked()
     {
-        if(CardNo>=cards.length)return true;
-         return cards[CardNo].isLocked();
+         return cards[currentCard].isLocked();
     }
     public String toXML(String margin, String spacer)
     {
@@ -73,6 +75,7 @@ public class User
         result+=wallet.toXML(margin + spacer, spacer);
         if(cards!=null) {
             result += margin + spacer + "<cards>\n";
+            result+=margin+spacer+"<current>"+currentCard+"</current>\n";
             for (int i = 0; i < cards.length; i++) {
                 if (cards[i] != null) result += cards[i].toXML(margin + spacer + spacer, spacer);
             }
@@ -82,37 +85,36 @@ public class User
         result+=margin+"</user>\n";
         return result;
     }
-    public static String alter(String rawData)
-    {
-        if(rawData == null)return null;
-        rawData = rawData.replaceAll("\t","");
-        rawData = rawData.replaceAll("\n","");
-        rawData = rawData.replaceAll(" ","");
-        return rawData;
-    }
     public static User getFromXML(String data)
     {
         User result;
         String name,surname,wallet,cards;
-        int ANumberOfCards;
-        name = CreditCard.getData(data,"<name>","</name>");
-        surname = CreditCard.getData(data,"<surname>","</surname>");
-        wallet = CreditCard.getData(data,"<wallet>","</wallet>");
-        cards = CreditCard.getData(data,"<cards>","</cards>");
+        name = XMLTools.getData(data,"<name>","</name>");
+        surname = XMLTools.getData(data,"<surname>","</surname>");
+        wallet = XMLTools.getData(data,"<wallet>","</wallet>");
+        cards = XMLTools.getData(data,"<cards>","</cards>");
         result = new User(name,surname);
-        ANumberOfCards = CreditCard.countOccurrence(cards,"<card>");
-        result.cards = new CreditCard[ANumberOfCards];
-        for(int i = 0;i < ANumberOfCards;i++)
+        result.ANumberOfCards = XMLTools.countOccurrence(cards,"<card>");
+        try {
+            result.currentCard = Integer.parseInt(XMLTools.getData(cards, "<current>", "</current>"));
+        }
+        catch(NullPointerException | NumberFormatException exception)
+        {
+            System.out.println("Error on getting current card!\nUsing defaults...");
+            result.currentCard = 0;
+        }
+        result.cards = new CreditCard[result.ANumberOfCards];
+        for(int i = 0;i < result.ANumberOfCards;i++)
         {
             result.cards[i] = CreditCard.getFromXML(cards);
-            cards = CreditCard.moveToNext(cards);
+            cards = XMLTools.moveToNext(cards,"</card>");
         }
         result.wallet = Wallet.getFromXML(wallet);
         return result;
     }
     public static String moveToNext(String data)
     {
-        int index = CreditCard.firstIndexOf(data,"</user>");
+        int index = XMLTools.firstIndexOf(data,"</user>");
         if (index < 0)return null;
         return data.substring(index);
     }

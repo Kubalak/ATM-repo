@@ -1,6 +1,7 @@
 import user.CreditCard;
 import user.User;
 import user.Wallet;
+import xml.XMLTools;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,36 +16,65 @@ import java.util.Scanner;
 
 public class Window extends JFrame implements ActionListener{
 
-    JButton keyNumber1, keyNumber2, keyNumber3, keyNumber4, keyNumber5, keyNumber6;
-    JButton keyNumber7, keyNumber8, keyNumber9, keyNumber0, keyNumber000, keyLeft1;
-    JButton keyEnter, keyDelete, keyClear,keyCancel,keyCardtestonly;
-    JMenuBar Menubar;
-    JMenu Help;
-    JMenuItem About,Save,Load;
-    JButton keyLeft2, keyLeft3, keyRight1,keyRight2,keyRight3;
-    JLabel ActionIn, ActionOut;
-    StateManager State;
-    User[] users;
+   private JButton keyNumber1, keyNumber2, keyNumber3, keyNumber4, keyNumber5, keyNumber6;
+   private JButton keyNumber7, keyNumber8, keyNumber9, keyNumber0, keyNumber000, keyLeft1;
+   private JButton keyEnter, keyDelete, keyClear,keyCancel,keyCardtestonly;
+   private JMenuBar Menubar;
+   private JMenu Help,MUser;
+   private JMenuItem About,Save,Load,SwitchUser,SwitchCard;
+   private JButton keyLeft2, keyLeft3, keyRight1,keyRight2,keyRight3;
+   private StateManager State;
+   private int currentUser,ANumberOfUsers;
+   private String currency;
+   private User[] users;
+   private void saveState()
+   {
+       try
+       {
+           FileWriter writer = new FileWriter("userdata/settings.xml");
+           writer.write("<?xml version=\"1.0\"?>\n");
+           writer.write("<users>\n"+XMLTools.toXML(currency,"currency")+"\n");
+           if(users != null){
+               writer.write("  <current>"+currentUser+"</current>\n");
+               for(int i=0;i<users.length;++i)if(users[i] != null)writer.write(users[i].toXML("   ","   "));
+           }
+           else writer.write("null");
+           writer.write("</users>");
+           writer.close();
+       }
+       catch(IOException exception)
+       {
+           System.out.println("Save failed!");
+       }
+   }
     Window()
     {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(800,900);
         this.setResizable(false);
         this.setLayout(new BorderLayout());
-        this.setTitle("Bankomat");
+        this.setIconImage(new ImageIcon(this.getClass().getResource("textures/logo.png")).getImage());
         Menubar = new JMenuBar();
         Menubar.setBounds(0,0,800,25);
         Help = new JMenu("Help");
+        MUser = new JMenu("User");
+        SwitchCard = new JMenuItem("Switch Card");
+        SwitchUser = new JMenuItem("Switch User");
         About = new JMenuItem("About");
         Save = new JMenuItem("Save");
         Load = new JMenuItem("Load");
         Load.addActionListener(this);
         Save.addActionListener(this);
         About.addActionListener(this);
+        SwitchUser.addActionListener(this);
+        SwitchCard.addActionListener(this);
         Help.add(Load);
         Help.add(Save);
         Help.add(About);
+        MUser.add(SwitchUser);
+        MUser.add(SwitchCard);
         Menubar.add(Help);
+        Menubar.add(MUser);
         try {
             File input = new File("userdata/settings.xml");
             Scanner  reader = new Scanner(input);
@@ -54,20 +84,24 @@ public class Window extends JFrame implements ActionListener{
                 data += reader.nextLine();
             }
             reader.close();
-            data = User.alter(data);
-            data = CreditCard.getData(data,"<users>","</users>");
-            int ANumberOfUsers = CreditCard.countOccurrence(data,"<user>");
+            data = XMLTools.getData(data,"<users>","</users>");
+            currency = XMLTools.getData(data,"<currency>","</currency>");
+            currentUser = Integer.parseInt(XMLTools.getData(data,"<current>","</current>"));
+            ANumberOfUsers = XMLTools.countOccurrence(data,"<user>");
             users = new User[ANumberOfUsers];
             for(int i=0;i<ANumberOfUsers;i++)
             {
                 users[i] = User.getFromXML(data);
                 data = User.moveToNext(data);
             }
-            State = new StateManager(users[0]);
+            State = new StateManager(users[currentUser]);
+            State.currency = currency;
+            this.setTitle("ATM: "+users[currentUser].Name+" "+users[currentUser].Surname);
         }
         catch(NullPointerException | FileNotFoundException exception)
         {
             System.out.println("Cannot open file!");
+            System.out.println(exception.getMessage());
             System.exit(1);
         }
         JPanel top = new JPanel();
@@ -76,14 +110,7 @@ public class Window extends JFrame implements ActionListener{
         JPanel bottom = new JPanel();
         JPanel center = new JPanel();
         JPanel keypad = new JPanel();
-        ActionIn = new JLabel("Wpłata");
-        ActionIn.setFont(new Font("Comic Sans MS",Font.PLAIN,20));
-        ActionIn.setSize(new Dimension(100,25));
-        ActionIn.setLocation(500,65);
-        ActionOut = new JLabel("Wypłata");
-        ActionOut.setFont(new Font("Comic Sans MS",Font.PLAIN,20));
-        ActionOut.setSize(new Dimension(100,25));
-        ActionOut.setLocation(500,160);
+
 
         bottom.setLayout(null);
         left.setLayout(null);
@@ -95,7 +122,7 @@ public class Window extends JFrame implements ActionListener{
         left.setBackground(new Color(0xcfcfcf));
         right.setBackground(new Color(0xcfcfcf));
         bottom.setBackground(new Color(0xcfcfcf));
-        center.setBackground(Color.WHITE);
+        //center.setBackground(Color.WHITE);
         keypad.setBackground(new Color(0xe6e6e6));
 
         top.setPreferredSize(new Dimension(100,100));
@@ -206,7 +233,6 @@ public class Window extends JFrame implements ActionListener{
         keyNumber000.setFont(new Font("Comic Sans",Font.BOLD,20));
         keyNumber000.setFocusable(false);
         keyNumber000.addActionListener(this);
-        //keyNumber1.setBackground(new Color(0xd9d9d9));
 
         keyLeft1.setBounds(25,50,50,50);
         keyLeft1.addActionListener(this);
@@ -251,16 +277,6 @@ public class Window extends JFrame implements ActionListener{
         keyCardtestonly.setFocusable(false);
         keyCardtestonly.addActionListener(this);
 
-
-        this.setJMenuBar(Menubar);
-        this.add(top, BorderLayout.NORTH);
-        this.add(left, BorderLayout.WEST);
-        this.add(right, BorderLayout.EAST);
-        this.add(bottom, BorderLayout.SOUTH);
-        this.add(center, BorderLayout.CENTER);
-
-
-
         keypad.add(keyNumber1);
         keypad.add(keyNumber2);
         keypad.add(keyNumber3);
@@ -279,8 +295,6 @@ public class Window extends JFrame implements ActionListener{
         bottom.add(keypad);
         bottom.add(keyCardtestonly);
         center.add(State);
-        center.add(ActionIn);
-        center.add(ActionOut);
 
         left.add(keyLeft1);
         left.add(keyLeft2);
@@ -289,6 +303,14 @@ public class Window extends JFrame implements ActionListener{
         right.add(keyRight1);
         right.add(keyRight2);
         right.add(keyRight3);
+
+        this.setJMenuBar(Menubar);
+        this.add(top, BorderLayout.NORTH);
+        this.add(left, BorderLayout.WEST);
+        this.add(right, BorderLayout.EAST);
+        this.add(bottom, BorderLayout.SOUTH);
+        this.add(center, BorderLayout.CENTER);
+        this.repaint();
         this.setVisible(true);
 
     }
@@ -296,153 +318,53 @@ public class Window extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        if(e.getSource()==keyNumber0)
-        {
-            //System.out.println("0");
-            State.sendSignal(0);
-        }
-        else if(e.getSource()==keyNumber1)
-        {
-            //System.out.println("1");
-            State.sendSignal(1);
-        }
-        else if(e.getSource()==keyNumber2)
-        {
-           // System.out.println("2");
-            State.sendSignal(2);
-        }
-        else if(e.getSource()==keyNumber3)
-        {
-          //  System.out.println("3");
-            State.sendSignal(3);
-        }
-        else if(e.getSource()==keyNumber4)
-        {
-           // System.out.println("4");
-            State.sendSignal(4);
-        }
-        else if(e.getSource()==keyNumber5)
-        {
-           // System.out.println("5");
-            State.sendSignal(5);
-        }
-        else if(e.getSource()==keyNumber6)
-        {
-         //   System.out.println("6");
-            State.sendSignal(6);
-        }
-        else if(e.getSource()==keyNumber7)
-        {
-         //   System.out.println("7");
-            State.sendSignal(7);
-        }
-        else if(e.getSource()==keyNumber8)
-        {
-           // System.out.println("8");
-            State.sendSignal(8);
-        }
-        else if(e.getSource()==keyNumber9)
-        {
-         //   System.out.println("9");
-            State.sendSignal(9);
-        }
-        else if(e.getSource()==keyNumber000)
-        {
-        //    System.out.println("000");
-            State.sendSignal(10);
-
-        }
-        else if(e.getSource()==keyLeft1)
-        {
-       //     System.out.println("Left1");
-            //State.sendSignal(-1);
-            State.sendSignal(-1);
-        }
-        else if(e.getSource()==keyLeft2)
-        {
-         //   System.out.println("Left2");
-            //State.sendSignal(-2);
-            State.sendSignal(-2);
-        }
-        else if(e.getSource()==keyLeft3)
-        {
-         //   System.out.println("Left3");
-            State.sendSignal(-3);
-        }
-        else if(e.getSource()==keyRight1)
-        {
-         //   System.out.println("Right1");
-            State.sendSignal(-4);
-        }
-        else if(e.getSource()==keyRight2)
-        {
-         //   System.out.println("Right2");
-            State.sendSignal(-5);
-        }
-        else if(e.getSource()==keyRight3)
-        {
-          //  System.out.println("Right3");
-            State.sendSignal(-6);
-        }
-        else if(e.getSource()==keyEnter)
-        {
-            //  System.out.println("Right3");
-            State.sendSignal(-7);
-        }
-        else if(e.getSource()==keyDelete)
-        {
-            //  System.out.println("Right3");
-            State.sendSignal(-8);
-        }
-        else if(e.getSource()==keyClear)
-        {
-            //  System.out.println("Right3");
-            State.sendSignal(-9);
-        }
-        else if(e.getSource()==keyCancel)
-        {
-            //  System.out.println("Right3");
-            State.sendSignal(-10);
-        }
+        if(e.getSource()==keyNumber0)State.sendSignal(0);
+        else if(e.getSource()==keyNumber1)State.sendSignal(1);
+        else if(e.getSource()==keyNumber2)State.sendSignal(2);
+        else if(e.getSource()==keyNumber3)State.sendSignal(3);
+        else if(e.getSource()==keyNumber4)State.sendSignal(4);
+        else if(e.getSource()==keyNumber5)State.sendSignal(5);
+        else if(e.getSource()==keyNumber6)State.sendSignal(6);
+        else if(e.getSource()==keyNumber7)State.sendSignal(7);
+        else if(e.getSource()==keyNumber8)State.sendSignal(8);
+        else if(e.getSource()==keyNumber9)State.sendSignal(9);
+        else if(e.getSource()==keyNumber000)State.sendSignal(10);
+        else if(e.getSource()==keyLeft1)State.sendSignal(-1);
+        else if(e.getSource()==keyLeft2)State.sendSignal(-2);
+        else if(e.getSource()==keyLeft3)State.sendSignal(-3);
+        else if(e.getSource()==keyRight1)State.sendSignal(-4);
+        else if(e.getSource()==keyRight2)State.sendSignal(-5);
+        else if(e.getSource()==keyRight3)State.sendSignal(-6);
+        else if(e.getSource()==keyEnter)State.sendSignal(-7);
+        else if(e.getSource()==keyDelete)State.sendSignal(-8);
+        else if(e.getSource()==keyClear)State.sendSignal(-9);
+        else if(e.getSource()==keyCancel)State.sendSignal(-10);
         else if(e.getSource()==keyCardtestonly)
         {
             if(!State.isCardInserted())
             {
-                if(State.insertCard(0) == 0)
-                keyCardtestonly.setText("Remove Card");
+                if(State.insertCard() == 0)
+                    keyCardtestonly.setEnabled(false);
             }
-            else
-                {
-                if(State.returnCard() == 0)
-                keyCardtestonly.setText("Insert Card");
-            }
+            else keyCardtestonly.setEnabled(true);
+
+            State.updateVisible();
         }
         else if(e.getSource()==About)
         {
-            JOptionPane.showMessageDialog(null,"ATM simulator v0.5.2.0","Info",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,"ATM simulator v0.5.3.1","Info",JOptionPane.INFORMATION_MESSAGE);
         }
         else if(e.getSource()==Save)
         {
-            try
-            {
-                FileWriter writer = new FileWriter("userdata/settings.xml");
-                writer.write("<?xml version=\"1.0\"?>\n<users>\n");
-                if(users != null)
-                for(int i=0;i<users.length;++i)if(users[i] != null)writer.write(users[i].toXML("   ","   "));
-                else writer.write("null");
-                writer.write("</users>");
-                writer.close();
-                System.out.println("Save success");
-            }
-            catch(IOException exception)
-            {
-                System.out.println("Save failed!");
-            }
+            saveState();
         }
         else if(e.getSource()==Load)
         {
             System.out.println("Hontoni argiato!");
-
         }
+        if(State.isCardInserted()) keyCardtestonly.setEnabled(false);
+        else  keyCardtestonly.setEnabled(true);
+        saveState();
+        this.repaint();
     }
 }

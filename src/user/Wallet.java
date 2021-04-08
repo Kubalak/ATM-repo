@@ -1,5 +1,7 @@
 package user;
 
+import xml.XMLTools;
+
 import java.util.Locale;
 
 public class Wallet
@@ -8,6 +10,22 @@ public class Wallet
     public Wallet()
     {
         tens = twenties = fifties = hundreds = two_hundreds = five_hundreds = 1;
+    }
+    public Wallet(int cash)
+    {
+        if(cash<0)throw new SecurityException("Cannot insert < 0 amount of money!");
+        five_hundreds = cash / 500;
+        cash %= 500;
+        two_hundreds = cash / 200;
+        cash %= 200;
+        hundreds = cash / 100;
+        cash %= 100;
+        fifties = cash / 50;
+        cash %= 50;
+        twenties = cash / 20;
+        cash %= 20;
+        tens = cash / 10;
+
     }
     public void cash_in(String what, int amount)
     {
@@ -22,7 +40,7 @@ public class Wallet
     }
 
 
-    public void cash_in(int cash)
+    public void cashIn(int cash)
     {
         if(cash<0) System.out.println("Cannot insert value lower than 0!");
         else {
@@ -40,7 +58,7 @@ public class Wallet
 
         }
     }
-    public int cash_out(int cash)
+    public int cashOut(int cash)
     {
         if(cash<0) {
             System.out.println("Cannot withdraw value lower than 0!");
@@ -84,7 +102,7 @@ public class Wallet
         return 0;
     }
 
-    public int cash_out(String what, int amount)
+    public int cashOut(String what, int amount)
     {
         if(amount<0||what==null){
             System.out.println("Operation not permitted!");
@@ -164,12 +182,12 @@ public class Wallet
     public static Wallet getFromXML(String data)
     {
         String tens,twenties,fifties,hundreds,two_hundreds,five_hundreds;
-        tens = CreditCard.getData(data,"<tens>","</tens>");
-        twenties = CreditCard.getData(data,"<twenties>","</twenties>");
-        fifties = CreditCard.getData(data,"<fifties>","</fifties>");
-        hundreds = CreditCard.getData(data,"<hundreds>","</hundreds>");
-        two_hundreds = CreditCard.getData(data,"<twohundreds>","</twohundreds>");
-        five_hundreds = CreditCard.getData(data,"<fivehundreds>","</fivehundreds>");
+        tens = XMLTools.getData(data,"<tens>","</tens>");
+        twenties = XMLTools.getData(data,"<twenties>","</twenties>");
+        fifties = XMLTools.getData(data,"<fifties>","</fifties>");
+        hundreds = XMLTools.getData(data,"<hundreds>","</hundreds>");
+        two_hundreds = XMLTools.getData(data,"<twohundreds>","</twohundreds>");
+        five_hundreds = XMLTools.getData(data,"<fivehundreds>","</fivehundreds>");
         try{
             Wallet result = new Wallet();
             result.tens = Integer.parseInt(tens);
@@ -178,10 +196,12 @@ public class Wallet
             result.hundreds = Integer.parseInt(hundreds);
             result.two_hundreds = Integer.parseInt(two_hundreds);
             result.five_hundreds = Integer.parseInt(five_hundreds);
+
             return result;
         }
         catch(NumberFormatException exception)
         {
+            System.out.println("Error while parsing"+data);
             System.out.println("Data is corrupted!");
         }
         return null;
