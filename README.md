@@ -6,6 +6,7 @@ It is now possible to work with different user / card however you have to change
 Current user name and surname are displayed int the title of the window<br>
 Information about ongoing operation are now shown on the <b>center</b> `JPanel`<br>
 `settings.xml` now stores information about the currency of the machine.<br>
+`StateManager` contains 5 different `JLabeles` associated with ATM window parts.<br> 
 
 ## Tweaks
 Changed behaviour while trying to insert card that is already inserted.<br>
@@ -13,7 +14,6 @@ Machine state is saved after every user action.<br>
 Created class `XMLTools` that provide basic XML utilities.
 
 ## New functions:
-Checking account balance.<br>
 User can set manually withdraw value.<br>
 
 # Changelog v0.5.2.0
