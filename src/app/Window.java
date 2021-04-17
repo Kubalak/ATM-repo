@@ -480,7 +480,7 @@ public class Window extends JFrame implements ActionListener{
         }
         else if(e.getSource()==About)
         {
-            JOptionPane.showMessageDialog(null,"ATM simulator v0.5.3.1","Info",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,"ATM simulator v0.5.4.0","Info",JOptionPane.INFORMATION_MESSAGE);
         }
         else if(e.getSource() == Exit)
         {
