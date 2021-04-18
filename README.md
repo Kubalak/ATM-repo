@@ -6,6 +6,7 @@ Fixed a bug with -1 value of banknotes in the user wallet after changing working
 Position of a window is now saved to the `userdata/settings.xml` file.<br>
 Started creating code documentation.<br>
 Project is ready to be get textures, sounds, etc. involved.<br>
+Changing user and card is now supported.
 
 ## Tweaks
 Classes `Main`,`StateManager`,`Window` have been moved to different package.<br>
@@ -17,7 +18,8 @@ Window position is now saved to the settings file.<br>
 You can check whether machine state has changed or not.<br>
 It is now possible to check between what states machine is switching.<br>
 `Wallet` class now allows creating a copy of an existing object or to copy contents of another object (in order to prevent bugs in the future).<br>
-It is now possible to change your PIN code as a user.
+It is now possible to change your PIN code as a user.<br>
+It is now possible to change card and user from the menu.
 
 # Changelog v0.5.3.1
 It is now possible to work with different user / card however you have to change it manually in the `userdata/settings.xml`.<br/>
