@@ -493,11 +493,53 @@ public class Window extends JFrame implements ActionListener{
         }
         else if(e.getSource()==SwitchUser)
         {
-
+            if(State.getCurrentState().equals("IDLE"))
+            {
+                String[] options = new String[ANumberOfUsers];
+                for(int i = 0;i<ANumberOfUsers;i++)options[i] = users[i].Name+" "+users[i].Surname+" "+(i+1);
+                String s = (String) JOptionPane.showInputDialog(this,"Select user:","User selection",JOptionPane.PLAIN_MESSAGE,null,options,options[currentUser]);
+                if(s!=null)
+                {
+                    try{
+                        int tmp = Integer.parseInt(s.substring(s.lastIndexOf(" ")+1));
+                        currentUser = tmp - 1;
+                        this.setTitle("ATM: "+users[currentUser].Name+" "+users[currentUser].Surname);
+                        State.switchUser(users[currentUser]);
+                    }
+                    catch(NullPointerException | NumberFormatException exception)
+                    {
+                        System.out.println("Exception: "+exception.getMessage());
+                    }
+                }
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(this,"Yo cannot change the user now","Warning",JOptionPane.WARNING_MESSAGE);
+            }
         }
         else if(e.getSource()==SwitchCard)
         {
-
+            if(State.getCurrentState().equals("IDLE"))
+            {
+                String[] options = new String[users[currentUser].getNumberOfCards()];
+                for (int i=0;i<users[currentUser].getNumberOfCards();i++)options[i] = "Card number "+(i+1);
+                String s = (String)JOptionPane.showInputDialog(this,"Select card: ","Card selection",JOptionPane.PLAIN_MESSAGE,null,options,options[users[currentUser].getCardIndex()]);
+                if(s!=null)
+                {
+                    try{
+                        int tmp = Integer.parseInt(s.substring(s.lastIndexOf(" ")+1));
+                        users[currentUser].switchCard(tmp - 1);
+                    }
+                    catch(NullPointerException | NumberFormatException exception)
+                    {
+                        System.out.println("Exception: "+exception.getMessage());
+                    }
+                }
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(this,"Yo cannot change the card now","Warning",JOptionPane.WARNING_MESSAGE);
+            }
         }
         else
         {

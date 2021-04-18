@@ -154,6 +154,17 @@ public class User
     }
 
     /**
+     * Metoda zwracająca indeks karty aktywnego użytkownika.
+     * @return <b style="color:#B45700;">int</b> - Zwraca indeks bieżącej karty użytkownika.
+     */
+    public int getCardIndex(){return currentCard;}
+
+    /**
+     * Metoda zwracająca ilość kart posiadanych przez użytkownika.
+     * @return <b style="color:#B45700;">int</b> - Zwraca ilość kart, które posiada użytkownik.
+     */
+    public int getNumberOfCards(){return ANumberOfCards;}
+    /**
      * Metoda zwracająca zawartość obiektu w postaci XML.
      * @param margin <b style="color:#0B5E03;">String</b> - Margines - odstęp przed sekcją użytkownika.
      * @param spacer <b style="color:#0B5E03;">String</b> - Wcięcia - służą do tworzenia wcięć dla przechowywanych obiektów.
