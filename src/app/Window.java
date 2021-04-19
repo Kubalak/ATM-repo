@@ -1,19 +1,12 @@
 package app;
-import user.CreditCard;
-import user.User;
+import settings.Settings;
 import user.Wallet;
-import xml.XMLTools;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Scanner;
 
 /**
  * Klasa odpowiedzialna za główne okno aplikacji.
@@ -53,7 +46,7 @@ public class Window extends JFrame implements ActionListener{
     /**
      * Elementy menu.
      */
-   private final JMenuItem About,Exit,Load,SwitchUser,SwitchCard;
+   private final JMenuItem About,Exit,SwitchUser,SwitchCard;
     /**
      * Klawisze boczne oraz przycisk do włożenia karty.
      */
@@ -64,55 +57,17 @@ public class Window extends JFrame implements ActionListener{
     */
    private StateManager State;
     /**
-     * Zmienne dotyczące wybranych użytkowników oraz ich ilości.
-     */
-   private int currentUser,ANumberOfUsers;
-    /**
-     * Pozycja okna X / Y.
-     * Uzyskiwana jest z pliku <i style="background:rgba(92,92,92,0.5);border-radius:0.5em;">&nbsp;settings.xml&nbsp;</i> oraz zapisywana do niego podczas zamykania programu.
-     */
-   private int posX = 0,posY = 0;
-    /**
-     * Waluta używana w bankomacie - również uzyskiwana z pliku <i style="background:rgba(92,92,92,0.5);border-radius:0.5em;">&nbsp;settings.xml&nbsp;</i> oraz zapisywana do niego podczas zamykania programu.
-     */
-   private String currency;
-    /**
      * <i>"Portfele"</i> używane w operacji depozytu.
      */
    private final Wallet operational,temporary;
     /**
      * Tablica przechowująca wszystkich użytkowników - <i style="background:rgba(92,92,92,0.5);border-radius:0.5em;">&nbsp;settings.xml&nbsp;</i> oraz zapisywana do niego podczas zamykania programu.
      */
-   private User[] users;
-
-    /**
-     * Metoda zapisuje stan maszyny do pliku <i style="background:rgba(92,92,92,0.5);border-radius:0.5em;">&nbsp;settings.xml&nbsp;</i> podczas zamykania programu.
-     */
-   private void saveState()
-   {
-       posX = this.getX();
-       posY = this.getY();
-       try
-       {
-           FileWriter writer = new FileWriter("userdata/settings.xml");
-           writer.write("<?xml version=\"1.0\"?>\n");
-           writer.write("<users>\n"+XMLTools.toXML(currency,"currency")+"\n");
-           writer.write(XMLTools.toXML(posX,"posX")+"\n");
-           writer.write(XMLTools.toXML(posY,"posY")+"\n");
-           if(users != null){
-               writer.write("  <current>"+currentUser+"</current>\n");
-               for(int i=0;i<users.length;++i)if(users[i] != null)writer.write(users[i].toXML("   ","   "));
-           }
-           else writer.write("null");
-           writer.write("</users>");
-           writer.close();
-       }
-       catch(IOException exception)
-       {
-           System.out.println("Save failed!");
-       }
-   }
-
+private void updatePos()
+{
+    Settings.posX = this.getX();
+    Settings.posY = this.getY();
+}
     /**
      * Jedyny konstruktor klasy.
      * @param defaultPos <b style="color:#B45700;">boolean</b> Wskazuje na to, czg okno ma pojawić się w pozycji domyślnej (nie ustawionej), czy też tej wczytanej z pliku.
@@ -127,7 +82,8 @@ public class Window extends JFrame implements ActionListener{
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                saveState();
+                updatePos();
+                Settings.saveState();
                 System.exit(0);
             }
         });
@@ -139,67 +95,22 @@ public class Window extends JFrame implements ActionListener{
         SwitchUser = new JMenuItem("Switch User");
         About = new JMenuItem("About");
         Exit = new JMenuItem("Exit");
-        Load = new JMenuItem("Load");
-        Load.addActionListener(this);
         Exit.addActionListener(this);
         About.addActionListener(this);
         SwitchUser.addActionListener(this);
         SwitchCard.addActionListener(this);
-        Help.add(Load);
         Help.add(Exit);
         Help.add(About);
         MUser.add(SwitchUser);
         MUser.add(SwitchCard);
         Menubar.add(Help);
         Menubar.add(MUser);
-        try {
-            File input = new File("userdata/settings.xml");
-            Scanner  reader = new Scanner(input);
-            String data = "";
-            while(reader.hasNextLine())
-            {
-                data += reader.nextLine();
-            }
-            reader.close();
-            data = XMLTools.getData(data,"users");
-            try {
-                posX = Integer.parseInt(XMLTools.getData(data, "posX"));
-                posY = Integer.parseInt(XMLTools.getData(data,"posY"));
-            }
-            catch(NumberFormatException | NullPointerException exception)
-            {
-                System.out.println("Exception "+exception.getMessage());
-                posX = -1;
-                posY = -1;
-            }
-            currency = XMLTools.getData(data,"currency");
-            currentUser = Integer.parseInt(XMLTools.getData(data,"current"));
-            ANumberOfUsers = XMLTools.countOccurrence(data,"<user>");
-            users = new User[ANumberOfUsers];
-            for(int i=0;i<ANumberOfUsers;i++)
-            {
-                users[i] = User.getFromXML(data);
-                data = User.moveToNext(data);
-            }
-            State = new StateManager(users[currentUser]);
-            State.currency = currency;
-            this.setTitle("ATM: "+users[currentUser].Name+" "+users[currentUser].Surname);
-        }
-        catch(NullPointerException | FileNotFoundException exception)
-        {
-            System.out.println("Exce[tion: "+exception.getMessage());
-            users = new User[1];
-            users[0] = new User("John","Trueman");
-            CreditCard[] tmp = new CreditCard[1];
-            tmp[0] = new CreditCard(1111);
-            users[0].addCards(tmp);
-            users[0].setWallet(new Wallet(false));
-            this.setTitle("ATM: "+users[currentUser].Name+" "+users[currentUser].Surname);
-            currentUser = 0;
-        }
-        if(!defaultPos)this.setLocation(posX,posY);
+        State = new StateManager(Settings.users.get(Settings.currentUser()));
+        State.currency = Settings.currency;
+        this.setTitle("ATM: "+Settings.users.get(Settings.currentUser()).Name+" "+Settings.users.get(Settings.currentUser()).Surname);
+        if(!defaultPos)this.setLocation(Settings.posX,Settings.posY);
         operational = new Wallet(true);
-        temporary = users[currentUser].getWallet().copy();
+        temporary = Settings.users.get(Settings.currentUser()).getWallet().copy();
         JPanel top = new JPanel();
         JPanel left = new JPanel();
         JPanel right = new JPanel();
@@ -260,16 +171,17 @@ public class Window extends JFrame implements ActionListener{
 
             WLabels[i] = new JLabel("x0");
             WLabels[i].setFont(new Font("Comic Sans",Font.BOLD,15));
-            WLabels[i].setBounds(575 + i%2*105,150+ 40 * (i / 2) ,60,30);
-            if(i%2==1)WLabels[i].setHorizontalTextPosition(SwingConstants.RIGHT);
+            WLabels[i].setBounds(490 + i%2*150,150+ 40 * (i / 2) ,60+(i%2==0?40:0),30);
+            WLabels[i].setHorizontalTextPosition(SwingConstants.RIGHT);
+            WLabels[i].setHorizontalAlignment(SwingConstants.RIGHT);
         }
 
-        WLabels[0].setText("x"+temporary.getAmount("10"));
-        WLabels[2].setText("x"+temporary.getAmount("20"));
-        WLabels[4].setText("x"+temporary.getAmount("50"));
-        WLabels[6].setText("x"+temporary.getAmount("100"));
-        WLabels[8].setText("x"+temporary.getAmount("200"));
-        WLabels[10].setText("x"+temporary.getAmount("500"));
+        WLabels[0].setText("10 x"+temporary.getAmount("10"));
+        WLabels[2].setText("20 x"+temporary.getAmount("20"));
+        WLabels[4].setText("50 x"+temporary.getAmount("50"));
+        WLabels[6].setText("100 x"+temporary.getAmount("100"));
+        WLabels[8].setText("200 x"+temporary.getAmount("200"));
+        WLabels[10].setText("500 x"+temporary.getAmount("500"));
 
         keyEnter = new JButton("Enter");
         keyDelete = new JButton("Delete");
@@ -480,31 +392,28 @@ public class Window extends JFrame implements ActionListener{
         }
         else if(e.getSource()==About)
         {
-            JOptionPane.showMessageDialog(null,"ATM simulator v0.5.4.0","Info",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,"ATM simulator v0.5.5.0","Info",JOptionPane.INFORMATION_MESSAGE);
         }
         else if(e.getSource() == Exit)
         {
-            saveState();
+            Settings.saveState();
             System.exit(0);
-        }
-        else if(e.getSource()==Load)
-        {
-            System.out.println("Hontoni argiato!");
         }
         else if(e.getSource()==SwitchUser)
         {
             if(State.getCurrentState().equals("IDLE"))
             {
-                String[] options = new String[ANumberOfUsers];
-                for(int i = 0;i<ANumberOfUsers;i++)options[i] = users[i].Name+" "+users[i].Surname+" "+(i+1);
-                String s = (String) JOptionPane.showInputDialog(this,"Select user:","User selection",JOptionPane.PLAIN_MESSAGE,null,options,options[currentUser]);
+                String[] options = new String[Settings.ANumberOfUsers()];
+                for(int i = 0;i<Settings.ANumberOfUsers();i++)options[i] = Settings.users.get(i).Name+" "+Settings.users.get(i).Surname+" "+(i+1);
+                String s = (String) JOptionPane.showInputDialog(this,"Select user:","User selection",JOptionPane.PLAIN_MESSAGE,null,options,options[Settings.currentUser()]);
                 if(s!=null)
                 {
                     try{
                         int tmp = Integer.parseInt(s.substring(s.lastIndexOf(" ")+1));
-                        currentUser = tmp - 1;
-                        this.setTitle("ATM: "+users[currentUser].Name+" "+users[currentUser].Surname);
-                        State.switchUser(users[currentUser]);
+                        Settings.setCurrentUser(tmp - 1);
+                        this.setTitle("ATM: "+Settings.users.get(Settings.currentUser()).Name+" "+Settings.users.get(Settings.currentUser()).Surname);
+                        State.switchUser(Settings.users.get(Settings.currentUser()));
+                        temporary.copy(Settings.users.get(Settings.currentUser()).getWallet());
                     }
                     catch(NullPointerException | NumberFormatException exception)
                     {
@@ -521,14 +430,14 @@ public class Window extends JFrame implements ActionListener{
         {
             if(State.getCurrentState().equals("IDLE"))
             {
-                String[] options = new String[users[currentUser].getNumberOfCards()];
-                for (int i=0;i<users[currentUser].getNumberOfCards();i++)options[i] = "Card number "+(i+1);
-                String s = (String)JOptionPane.showInputDialog(this,"Select card: ","Card selection",JOptionPane.PLAIN_MESSAGE,null,options,options[users[currentUser].getCardIndex()]);
+                String[] options = new String[Settings.users.get(Settings.currentUser()).getNumberOfCards()];
+                for (int i=0;i<Settings.users.get(Settings.currentUser()).getNumberOfCards();i++)options[i] = "Card number "+(i+1);
+                String s = (String)JOptionPane.showInputDialog(this,"Select card: ","Card selection",JOptionPane.PLAIN_MESSAGE,null,options,options[Settings.users.get(Settings.currentUser()).getCardIndex()]);
                 if(s!=null)
                 {
                     try{
                         int tmp = Integer.parseInt(s.substring(s.lastIndexOf(" ")+1));
-                        users[currentUser].switchCard(tmp - 1);
+                        Settings.users.get(Settings.currentUser()).switchCard(tmp - 1);
                     }
                     catch(NullPointerException | NumberFormatException exception)
                     {
@@ -541,8 +450,7 @@ public class Window extends JFrame implements ActionListener{
                 JOptionPane.showMessageDialog(this,"Yo cannot change the card now","Warning",JOptionPane.WARNING_MESSAGE);
             }
         }
-        else
-        {
+
             String [] nominals={"10","20","50","100","200","500"};
             for(int i=0;i<12;i++)
             {
@@ -550,20 +458,20 @@ public class Window extends JFrame implements ActionListener{
                     {
                         case 0:
                             if(e.getSource()==WalletOps[i] && State.getCurrentState().equals("INPUT"))operational.transfer(nominals[i / 2], temporary);
-                            WLabels[i].setText("x" + temporary.getAmount(nominals[i / 2]));
+                            WLabels[i].setText(nominals[i/2]+" x" + temporary.getAmount(nominals[i / 2]));
                             WLabels[i + 1].setText("x" + operational.getAmount(nominals[i / 2]));
                             break;
                         case 1:
                             if(e.getSource()==WalletOps[i] && State.getCurrentState().equals("INPUT"))temporary.transfer(nominals[i / 2], operational);
-                            WLabels[i - 1].setText("x" + temporary.getAmount(nominals[i / 2]));
+                            WLabels[i - 1].setText(nominals[i/2]+" x" + temporary.getAmount(nominals[i / 2]));
                             WLabels[i].setText("x" + operational.getAmount(nominals[i / 2]));
                             break;
                     }
             }
-        }
+
         if(!State.getCurrentState().equals("INPUT"))
         {
-            temporary.copy(users[currentUser].getWallet());
+            temporary.copy(Settings.users.get(Settings.currentUser()).getWallet());
             operational.clear();
         }
         keyCardtestonly.setEnabled(!State.isCardInserted());

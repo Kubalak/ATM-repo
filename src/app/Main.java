@@ -1,4 +1,7 @@
 package app;
+
+import settings.Settings;
+
 /**
  * Główna klasa programu wraz ze statyczną metodą <i>main</i>.
  *
@@ -15,6 +18,7 @@ public class Main {
      */
     public static void main(String[] args)
     {
+        Settings.loadSettings();
         Window okno = new Window((args.length > 0) && args[args.length-1].equals("default"));
     }
 }

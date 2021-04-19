@@ -1,10 +1,19 @@
 package app;
+import settings.Settings;
 import user.User;
 import user.Wallet;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Vector;
+import java.util.logging.SimpleFormatter;
 
 /*
 Opis sygnałów:
@@ -364,6 +373,26 @@ public class StateManager extends JPanel
     }
 
     /**
+     * Metoda umożliwiająca zmianę stanu bankomatu.
+     * @param state <b style="color:#0B5E03;">String</b> - Nowy stan, który ma przyjąć bankomat.
+     */
+    private void changeState(String state)
+    {
+        statesHistory.add(currentState);
+        lastState = currentState;
+        stateChanged = true;
+        currentState = state;
+        if(state.equals("OUTPUT"))
+        {
+            moneyToBurn = 0;
+        }
+        if(state.equals("IDLE"))
+        {
+            resetCard();
+            statesHistory.clear();
+        }
+    }
+    /**
      * Metoda obsługująca sygnały w stanie <i>OP_SEL</i>.
      * @param signal <b style="color:#B45700;">int</b> - Sygnał wysyłany do metody.
      * @return <b style="color:#B45700;">int</b> - Zwraca 0 w przypadku powodzenia, -1 w przypadku niepowodzenia lub -2 jeśli sygnał nie jest obsługiwany.
@@ -372,38 +401,25 @@ public class StateManager extends JPanel
     {
         if(signal == -1)
         {
-            statesHistory.add(currentState);
-            lastState = currentState;
-            stateChanged = true;
-            currentState = states[1];
+            changeState(states[1]);
             System.out.println("You selected withdraw. Please select amount of money you wish to take");
             return 0;
         }
         else if(signal == -2)
         {
-            statesHistory.add(currentState);
-            lastState = currentState;
-            stateChanged = true;
-            currentState = states[2];
+            changeState(states[2]);
             System.out.println("You selected deposit. Please give me your money!");
             return 0;
         }
         else if(signal == -3)
         {
-            statesHistory.add(currentState);
-            lastState = currentState;
-            stateChanged = true;
-            currentState = states[6];
+            changeState(states[6]);
             System.out.println("You selected current account state.");
             return  0;
         }
         else if(signal == -4)
         {
-            statesHistory.add(currentState);
-            lastState = currentState;
-            stateChanged = true;
-            currentState = states[7];
-            pinIndex = 0;
+            changeState(states[7]);
             System.out.println("You selected changing your PIN.");
             return 0;
         }
@@ -437,10 +453,7 @@ public class StateManager extends JPanel
             }
             if(pinIndex == 4)
             {
-                statesHistory.clear();
-                lastState = currentState;
-                stateChanged = true;
-                currentState = states[5];
+                changeState(states[5]);
                 if(user.getCard().changePIN(code,tmp) == 0)
                 {
                     this.returnCard();
@@ -448,7 +461,7 @@ public class StateManager extends JPanel
                 }
                  return -1;
             }
-            else return -1;
+            return -1;
         }
         else if(signal == -8)
         {
@@ -466,10 +479,7 @@ public class StateManager extends JPanel
         }
         else if(signal == -10)
         {
-            pinIndex = 0;
-            lastState = currentState;
-            stateChanged = true;
-            currentState = states[0];
+            changeState(states[0]);
             this.returnCard();
             return 0;
         }
@@ -486,10 +496,7 @@ public class StateManager extends JPanel
         {
             System.out.println("Your current credit is "+user.getCard().checkCredit()+" "+currency);
             this.returnCard();
-            lastState = currentState;
-            stateChanged = true;
-            statesHistory.clear();
-            currentState = states[0];
+            changeState(states[5]);
             return 0;
         }
         else if(signal == -10)
@@ -497,10 +504,7 @@ public class StateManager extends JPanel
             System.out.println("You aborted operation");
             currentState = "ABORT";
             this.returnCard();
-            lastState = currentState;
-            stateChanged = true;
-            statesHistory.clear();
-            currentState = states[0];
+            changeState(states[0]);
             return 0;
         }
         return -2;
@@ -509,17 +513,14 @@ public class StateManager extends JPanel
     /**
      * Metoda służąca do próby wypłacenia ilości gotówki określonej przez <i>value</i>.
      * @param value <b style="color:#B45700;">int</b> - Ilość gotówki do wypłacenia.
-     * @return - Zwraca 0 w przypadku powodzenia lub -1 w przypadku niepowodzenia.
+     * @return <b style="color:#B45700;">int</b>- Zwraca 0 w przypadku powodzenia lub -1 w przypadku niepowodzenia.
      */
     private int tryWithdraw(int value)
     {
         if(user.withdraw(value))
         {
             System.out.println("Withdraw success!");
-            statesHistory.add(currentState);
-            lastState = currentState;
-            stateChanged = true;
-            currentState = states[5];
+            changeState(states[5]);
             this.returnCard();
             return 0;
         }
@@ -535,22 +536,27 @@ public class StateManager extends JPanel
     {
         if(signal == -1 && !isOtherAmountSelected)
         {
+            moneyToBurn = 10;
             return tryWithdraw(10);
         }
         else if(signal == -2 && !isOtherAmountSelected)
         {
+            moneyToBurn = 20;
            return  tryWithdraw(20);
         }
         else if(signal == -3 && !isOtherAmountSelected)
         {
+            moneyToBurn = 50;
             return  tryWithdraw(50);
         }
         else if(signal == -4 && !isOtherAmountSelected)
         {
+            moneyToBurn = 100;
             return tryWithdraw(100);
         }
         else if(signal == -5 && !isOtherAmountSelected)
         {
+            moneyToBurn = 200;
             return tryWithdraw(200);
         }
         else if(signal == -6 && !isOtherAmountSelected)
@@ -576,10 +582,7 @@ public class StateManager extends JPanel
                 if(user.withdraw(moneyToBurn))
                 {
                     System.out.println("Withdraw success!");
-                    statesHistory.add(currentState);
-                    lastState = currentState;
-                    stateChanged = true;
-                    currentState = states[5];
+                   changeState(states[5]);
                     this.returnCard();
                     return 0;
                 }
@@ -598,27 +601,20 @@ public class StateManager extends JPanel
             }
             else if(signal == -10)
             {
-                lastState = currentState;
-                stateChanged = true;
-                currentState = "ABORT";
-                this.returnCard();
-                System.out.println("Operation Cancelled! Going back to IDLE");
-                statesHistory.clear();
-                currentState = states[0];
-                return 0;
+
+               System.out.println("Operation Cancelled! Going back to IDLE");
+               changeState(states[0]);
+               this.returnCard();
+               return 0;
             }
         }
         else
         {
             if(signal == -10)
             {
-                lastState = currentState;
-                stateChanged = true;
-                currentState = "ABORT";
+               System.out.println("Operation Cancelled! Going back to IDLE");
+                changeState(states[0]);
                 this.returnCard();
-                System.out.println("Operation Cancelled! Going back to IDLE");
-                statesHistory.clear();
-                currentState = states[0];
                 return 0;
             }
         }
@@ -662,9 +658,7 @@ public class StateManager extends JPanel
 
                     System.out.println("Success\nPlease select operation.");
                     resetCard();
-                    lastState = currentState;
-                    stateChanged = true;
-                    currentState = states[4];
+                    changeState(states[4]);
                     return 0;
                 }
                 else {
@@ -709,17 +703,45 @@ public class StateManager extends JPanel
         }
         else if(signal == -10)
         {
-            lastState = currentState;
-            stateChanged = true;
-            currentState = "ABORT";
-            this.returnCard();
-            resetCard();
             System.out.println("Operation Cancelled! Going back to IDLE");
-            statesHistory.clear();
-            currentState = states[0];
+            changeState(states[0]);
+            this.returnCard();
             return 0;
         }
         return -2;
+    }
+
+    /**
+     * Metoda drukująca potwierdzenie do pliku.
+     */
+    private void printConfirm()
+    {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy_HHmmss"), full = new SimpleDateFormat("dd MM yyyy - HH:mm:ss");
+        try {
+            FileWriter writer = new FileWriter("userdata/" + formatter.format(new Date())+".html");
+            writer.write("<!DOCTYPE HTML>\n<html>\n<head>\n<title>Summary</title><meta charset=\"UTF-8\">\n</head>\n<body style=\"font-family:Arial;left-margin:1em;\">");
+            writer.write("Date signature: <b>"+full.format(new Date())+"</b><br>");
+            writer.write("Name: <b>"+user.Name+"</b><br>Surname: <b>"+user.Surname+"</b><br>PIN code compliant<br>");
+            if(lastState.equals("OUTPUT"))
+            {
+            writer.write("Withdraw value: <b>"+ moneyToBurn+"</b> "+Settings.currency+"<br>");
+            }
+            else if(lastState.equals("CHANGE"))
+            {
+                writer.write("PIN code successfully changed.<br>");
+            }
+            else if(lastState.equals("INPUT"))
+            {
+                writer.write("Deposit value: <b>"+ moneyToBurn+"</b> "+Settings.currency+"<br>");
+            }
+            writer.write("Credit remaining after operation: <b>"+user.getCard().checkCredit()+"</b> "+ Settings.currency);
+            writer.write("</body>\n</html>");
+            writer.close();
+        }
+        catch(NullPointerException | IOException exception)
+        {
+            System.out.println("Cannot open file!");
+        }
     }
     /**
      * Najdłuższa i najbardziej skomplikowana metoda z tej klasy.<br>
@@ -752,13 +774,11 @@ public class StateManager extends JPanel
             case "INPUT":
                 if(signal==-7)
                 {
+                    moneyToBurn = base.getAll();
                     if(deposit(base))
                     {
                         returnCode = 0;
-                        lastState = currentState;
-                        stateChanged = true;
-                        statesHistory.add(currentState);
-                        currentState = "SUMMARY";
+                        changeState(states[5]);
                         this.returnCard();
                     }
                     else
@@ -778,22 +798,17 @@ public class StateManager extends JPanel
                  //tutaj operacja wyboru drukowania potwierdzenia
                 if(signal == -4) {
                     System.out.println("Printing confirmation...");
+                    printConfirm();
                     System.out.println("Actual account credit is " + user.getCard().checkCredit() + " "+currency);
                     System.out.println("Thank you!");
                     returnCode = 0;
-                    lastState = currentState;
-                    stateChanged = true;
-                    statesHistory.clear();
-                    currentState = states[0];
+                    changeState(states[0]);
                 }
                 else if(signal == -6)
                 {
                     System.out.println("Thank you!");
                     returnCode = 0;
-                    lastState = currentState;
-                    stateChanged = true;
-                    statesHistory.clear();
-                    currentState = states[0];
+                    changeState(states[0]);
                 }
                 break;
         }

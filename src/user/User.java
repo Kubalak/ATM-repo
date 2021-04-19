@@ -1,6 +1,11 @@
 package user;
 import xml.XMLTools;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Vector;
+
 /**
  * Klasa odpowiadająca za poszczególnego użytkownika.
  * @author Jakub Jach
@@ -26,7 +31,7 @@ public class User
     /**
      * Tablica przechowująca wszystkie karty użytkownika.
      */
-    private CreditCard[] cards;
+    private final Vector<CreditCard> cards;
 
     /**
      * Jedyny konstruktor dla kalsy.
@@ -37,7 +42,7 @@ public class User
     {
         this.Name = Name;
         this.Surname = Surname;
-        cards = null;
+        cards = new Vector<CreditCard>();
         wallet = new Wallet(false);
     }
 
@@ -47,11 +52,19 @@ public class User
      */
     public void addCards(CreditCard[] creditCards)
     {
-        cards = new CreditCard[creditCards.length];
-        System.arraycopy(creditCards, 0, cards, 0, cards.length);
+        for(int i =0;i< creditCards.length;++i)cards.addAll(Arrays.asList(creditCards));
         currentCard = 0;
     }
 
+    /**
+     * Metoda pozwalająca dodać nową kartę do kolekcji.
+     * @param card <b style="color:#541704;">CreditCard</b> - Dodawana karta.
+     */
+    public void addCard(CreditCard card)
+    {
+        cards.add(card);
+        ANumberOfCards++;
+    }
     /**
      * Zwraca portfel użytkownika.
      * @return <b style="color:#541704;">Wallet</b> -  Portfel.
@@ -88,25 +101,19 @@ public class User
      * @param PIN <b style="color:#B45700;">int</b> - Numer PIN do sprawdzenia.
      * @return <b style="color:#B45700;">boolean</b> - Zwraca <i style="color:#B45700;">true</i> jeśli PINy są zgodne lub <i style="color:#B45700;">false</i> jeśli są niezgodne.
      */
-    public boolean checkCard(int PIN)
-    {
-        return cards[currentCard].verifyPIN(PIN);
-    }
+    public boolean checkCard(int PIN){return cards.get(currentCard).verifyPIN(PIN);}
 
     /**
      * Blokuje bieżącą kartę.
      */
-    public void blockCard()
-    {
-        cards[currentCard].lock();
-    }
+    public void blockCard(){cards.get(currentCard).lock();}
 
     /**
      * Odblokowuje bieżącą kartę.
      */
     public void unlockCard()
     {
-        cards[currentCard].unlock();
+        cards.get(currentCard).unlock();
     }
 
     /**
@@ -117,7 +124,7 @@ public class User
     public boolean withdraw(int value)
     {
         if(value < 0 || value % 10 != 0)return false;
-        boolean OK = cards[currentCard].changeCredit((double)-value);
+        boolean OK = cards.get(currentCard).changeCredit((double)-value);
         if(OK)  wallet.cashIn((int)value);
         return OK;
     }
@@ -131,7 +138,7 @@ public class User
     {
         System.out.println("Trying to deposit:\n"+ cash.toString()+"\nFrom:\n"+wallet.toString());
         if(!wallet.letTake(cash))return false;
-        cards[currentCard].changeCredit(wallet.take(cash));
+        cards.get(currentCard).changeCredit(wallet.take(cash));
         return true;
     }
 
@@ -139,10 +146,7 @@ public class User
      * Zwraca bieżącą kartę użytkownika.
      * @return <b style="color:#541704;">CreditCard</b> - Bieżąca karta.
      */
-    public CreditCard getCard()
-    {
-        return cards[currentCard];
-    }
+    public CreditCard getCard(){return cards.get(currentCard);}
 
     /**
      * Zwraca informację o tym, czy bieżąca karta jesat zablokowana.
@@ -150,7 +154,7 @@ public class User
      */
     public boolean isCardLocked()
     {
-         return cards[currentCard].isLocked();
+         return cards.get(currentCard).isLocked();
     }
 
     /**
@@ -179,8 +183,8 @@ public class User
         if(cards!=null) {
             result += margin + spacer + "<cards>\n";
             result+=margin+spacer+"<current>"+currentCard+"</current>\n";
-            for (int i = 0; i < cards.length; i++) {
-                if (cards[i] != null) result += cards[i].toXML(margin + spacer + spacer, spacer);
+            for (int i = 0; i < cards.size(); i++) {
+                if (cards.get(i) != null) result += cards.get(i).toXML(margin + spacer + spacer, spacer);
             }
             result += margin + spacer + "</cards>\n";
         }
@@ -212,10 +216,9 @@ public class User
             System.out.println("Error on getting current card!\nUsing defaults...");
             result.currentCard = 0;
         }
-        result.cards = new CreditCard[result.ANumberOfCards];
         for(int i = 0;i < result.ANumberOfCards;i++)
         {
-            result.cards[i] = CreditCard.getFromXML(cards);
+            result.cards.add(CreditCard.getFromXML(cards));
             cards = XMLTools.moveToNext(cards,"</card>");
         }
         result.wallet = Wallet.getFromXML(wallet);
@@ -233,4 +236,5 @@ public class User
         if (index < 0)return null;
         return data.substring(index);
     }
+
 }
