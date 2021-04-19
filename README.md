@@ -1,6 +1,18 @@
 # ATM-repo
 Atm project repository.
 
+# Changelog v0.5.5.0
+Created new class `Settings` that holds all the settings for the app.<br>
+Changed `StateManager` class methods structure to make code less redundant.<br>
+Method <i>sendSignal()</i> has been reorganized to make it shorter.
+
+## Tweaks
+`Window` class now accesses users via `Settings` class fields.<br>
+`Users` class array has been changed to `Vector<User>` as well as `CreditCard` array.
+
+## New Functions:
+In the <i>SUMMARY</i> state after selecting <i>Yes</i> in the confirmation quote results are printed to file `dd.mm.yyy_hhmmss` format.
+
 # Changelog v0.5.4.0
 Fixed a bug with -1 value of banknotes in the user wallet after changing working wallet contents.<br>
 Position of a window is now saved to the `userdata/settings.xml` file.<br>
