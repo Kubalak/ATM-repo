@@ -19,7 +19,7 @@ public class User
     /**
      * Imię oraz nazwisko użytkownika
      */
-    public final String Name,Surname;
+    public String Name,Surname;
     /**
      * Portfel użytkownika.
      */
@@ -34,7 +34,7 @@ public class User
     private final Vector<CreditCard> cards;
 
     /**
-     * Jedyny konstruktor dla kalsy.
+     * Jedyny konstruktor dla klasy.
      * @param Name <b style="color:#541704;">String</b> - Imię użytkownika.
      * @param Surname <b style="color:#541704;">String</b> - Nazwisko użytkownika.
      */
