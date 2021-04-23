@@ -1,6 +1,8 @@
 package app;
 import settings.Settings;
 import user.Wallet;
+import xml.XMLTools;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -400,7 +402,7 @@ private void updatePos()
         }
         else if(e.getSource()==About)
         {
-            JOptionPane.showMessageDialog(null,"ATM simulator v0.5.5.0","Info",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,"ATM simulator v0.5.5.0","Info",JOptionPane.INFORMATION_MESSAGE);//Sugeruję tutaj wykorzystać <version> </version> z pliku pom.xml na przykład jak zrobiono https://www.baeldung.com/java-accessing-maven-properties
         }
         else if(e.getSource() == Exit)
         {
