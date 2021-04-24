@@ -208,14 +208,13 @@ public class StateManager extends JPanel
      */
     private int returnCard()
     {
-        if(isCardInserted && (currentState.equals("SUMMARY") || currentState.equals("ABORT") || currentState.equals("PIN") || currentState.equals("CREDIT") || currentState.equals("CHANGE")))
+        if(isCardInserted)
         {
             isCardInserted = false;
             System.out.println("Please take your card back.");
             return 0;
         }
-        if(!isCardInserted) System.out.println("Card is not inserted!");
-        if(!currentState.equals("FINALIZE")) System.out.println("You cannot get your card back now...");
+        else System.out.println("Card is not inserted!");
         return -1;
     }
 
@@ -771,6 +770,13 @@ public class StateManager extends JPanel
                         System.out.println("Deposit failed!");
                         returnCode = -1;
                     }
+                }
+                else if(signal == -10)
+                {
+                    System.out.println("Operation Cancelled! Going back to IDLE");
+                    changeState(states[0]);
+                    this.returnCard();
+                    returnCode = 0;
                 }
                 break;
             case "OUTPUT":
