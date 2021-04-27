@@ -1,6 +1,14 @@
 # ATM-repo
 Atm project repository.
 
+# Changelog v0.6.0
+Created new class `Sound` that operates all necessary sound methods for the app.<br>
+
+## Tweaks
+`Window` class now uses obejcts of the `Sound` class to play certain sound or background music.
+`StateManager` class now uses methods of the `Sound` class to play certain sound after sucesfull deposit or withdraw.
+Method <i>returnCard()</i> now returns card in every state.
+
 # Changelog v0.5.5.0
 Created new class `Settings` that holds all the settings for the app.<br>
 Changed `StateManager` class methods structure to make code less redundant.<br>
