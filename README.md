@@ -5,7 +5,7 @@ Atm project repository.
 Created new class `Sound` that operates all necessary sound methods for the app.<br>
 
 ## Tweaks
-`Window` class now uses obejcts of the `Sound` class to play certain sound or background music.
+`Window` class now uses objects of the `Sound` class to play certain sound or background music.
 `StateManager` class now uses methods of the `Sound` class to play certain sound after sucesfull deposit or withdraw.
 Method <i>returnCard()</i> now returns card in every state.
 
