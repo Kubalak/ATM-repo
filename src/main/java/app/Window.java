@@ -1,14 +1,20 @@
 package app;
 import settings.Settings;
 import user.Wallet;
+import sound.Sound;
 import xml.XMLTools;
 
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 
 /**
@@ -63,6 +69,7 @@ public class Window extends JFrame implements ActionListener{
      * <i>"Portfele"</i> używane w operacji depozytu.
      */
    private final Wallet operational,temporary;
+
     /**
      * Tablica przechowująca wszystkich użytkowników - <i style="background:rgba(92,92,92,0.5);border-radius:0.5em;">&nbsp;settings.xml&nbsp;</i> oraz zapisywana do niego podczas zamykania programu.
      */
@@ -126,7 +133,14 @@ private void updatePos()
         JPanel right = new JPanel();
         JPanel bottom = new JPanel();
         JPanel center = new JPanel();
+
+        ImageIcon keypadImage = new ImageIcon("D:\\Projekty Java\\ATM-repo-Project\\textures\\KEYPAD_TEXTURE.png");
         JPanel keypad = new JPanel();
+
+
+
+
+
 
 
         bottom.setLayout(null);
@@ -169,6 +183,10 @@ private void updatePos()
         keyNumber9 = new JButton();
         keyNumber0 = new JButton();
         keyNumber000 = new JButton();
+
+
+
+
         WalletOps = new JButton[12];
         WLabels = new JLabel[12];
         for(int i=0;i<12;i++)
@@ -199,6 +217,8 @@ private void updatePos()
         keyCancel = new JButton("Cancel");
         keyCardtestonly = new JButton("Insert Card");
 
+
+
        keyLeft1 = new JButton();
        keyLeft2 = new JButton();
        keyLeft3 = new JButton();
@@ -213,6 +233,7 @@ private void updatePos()
         keyNumber1.setFont(new Font("Comic Sans",Font.BOLD,20));
         keyNumber1.setFocusable(false);
         keyNumber1.addActionListener(this);
+
 
         keyNumber2.setBounds(90,60,50,50);
         keyNumber2.setText("2");
@@ -358,6 +379,12 @@ private void updatePos()
         this.add(center, BorderLayout.CENTER);
         this.repaint();
         this.setVisible(true);
+        Sound background = new Sound();
+        background.playSound("/dzwiek_bankomatu.wav");
+        background.playBackgroundMusic("/szum.wav");
+
+
+
 
     }
 
@@ -368,29 +395,96 @@ private void updatePos()
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        if(e.getSource()==keyNumber0)State.sendSignal(0,operational);
-        else if(e.getSource()==keyNumber1)State.sendSignal(1,operational);
-        else if(e.getSource()==keyNumber2)State.sendSignal(2,operational);
-        else if(e.getSource()==keyNumber3)State.sendSignal(3,operational);
-        else if(e.getSource()==keyNumber4)State.sendSignal(4,operational);
-        else if(e.getSource()==keyNumber5)State.sendSignal(5,operational);
-        else if(e.getSource()==keyNumber6)State.sendSignal(6,operational);
-        else if(e.getSource()==keyNumber7)State.sendSignal(7,operational);
-        else if(e.getSource()==keyNumber8)State.sendSignal(8,operational);
-        else if(e.getSource()==keyNumber9)State.sendSignal(9,operational);
-        else if(e.getSource()==keyNumber000)State.sendSignal(10,operational);
-        else if(e.getSource()==keyLeft1)State.sendSignal(-1,operational);
-        else if(e.getSource()==keyLeft2)State.sendSignal(-2,operational);
-        else if(e.getSource()==keyLeft3)State.sendSignal(-3,operational);
-        else if(e.getSource()==keyRight1)State.sendSignal(-4,operational);
-        else if(e.getSource()==keyRight2)State.sendSignal(-5,operational);
-        else if(e.getSource()==keyRight3)State.sendSignal(-6,operational);
-        else if(e.getSource()==keyEnter)State.sendSignal(-7,operational);
-        else if(e.getSource()==keyDelete)State.sendSignal(-8,operational);
-        else if(e.getSource()==keyClear)State.sendSignal(-9,operational);
-        else if(e.getSource()==keyCancel)State.sendSignal(-10,operational);
+
+        Sound sounds_play = new Sound();
+
+        if(e.getSource()==keyNumber0){
+            State.sendSignal(0,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyNumber1){
+            State.sendSignal(1,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyNumber2){
+            State.sendSignal(2,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyNumber3){
+            State.sendSignal(3,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyNumber4){
+            State.sendSignal(4,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyNumber5){
+            State.sendSignal(5,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyNumber6){
+            State.sendSignal(6,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyNumber7){
+            State.sendSignal(7,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyNumber8){
+            State.sendSignal(8,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyNumber9){
+            State.sendSignal(9,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyNumber000) {
+            State.sendSignal(10,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyLeft1){
+            State.sendSignal(-1,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyLeft2){
+            State.sendSignal(-2,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyLeft3){
+            State.sendSignal(-3,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyRight1){
+            State.sendSignal(-4,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyRight2){
+            State.sendSignal(-5,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyRight3){
+            State.sendSignal(-6,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyEnter){
+            State.sendSignal(-7,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyDelete){
+            State.sendSignal(-8,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyClear) {
+            State.sendSignal(-9,operational);
+            sounds_play.playSound("/dzwiek_klikania.wav");
+        }
+        else if(e.getSource()==keyCancel){
+            State.sendSignal(-10,operational);
+            sounds_play.playSound("/wysuwanie_karty.wav");
+        }
         else if(e.getSource()==keyCardtestonly)
         {
+            sounds_play.playSound("/wsuwanie_karty.wav");
             if(!State.isCardInserted())
             {
                 if(State.insertCard() == 0)
@@ -402,7 +496,7 @@ private void updatePos()
         }
         else if(e.getSource()==About)
         {
-            JOptionPane.showMessageDialog(null,"ATM simulator v0.5.5.0","Info",JOptionPane.INFORMATION_MESSAGE);//Sugeruję tutaj wykorzystać <version> </version> z pliku pom.xml na przykład jak zrobiono https://www.baeldung.com/java-accessing-maven-properties
+            JOptionPane.showMessageDialog(null,"ATM simulator v0.6.0","Info",JOptionPane.INFORMATION_MESSAGE);//Sugeruję tutaj wykorzystać <version> </version> z pliku pom.xml na przykład jak zrobiono https://www.baeldung.com/java-accessing-maven-properties
         }
         else if(e.getSource() == Exit)
         {
@@ -491,6 +585,13 @@ private void updatePos()
         }
         this.repaint();
     }
+
+
+
+
+
+
+
 }
 
 

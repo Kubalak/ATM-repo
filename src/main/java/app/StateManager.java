@@ -1,5 +1,6 @@
 package app;
 import settings.Settings;
+import sound.Sound;
 import user.User;
 import user.Wallet;
 import javax.swing.*;
@@ -8,6 +9,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 
 /*
@@ -16,12 +19,10 @@ Opis sygnałów:
 10  000 z numpada
 -1 do -6 boczne przyciski przy ekranie
 -7 do -10 przyciski ENTER DELETE CLEAR CANCEL
-
 Zwracane kody:
  0 - powodzenie
 -1 - niepowodzenie operacji
 -2 - nierozpoznany kod sygnału
-
  */
 
 /**
@@ -42,7 +43,7 @@ public class StateManager extends JPanel
      * Ostatni stan bankomatu.
      */
     private String lastState;
-     /**
+    /**
      * Bieżący stan bankomatu - to na jego podstawie podejmuje decyzję o odpowiedniej reakcji na akcje ze strony użytkownika.
      */
     private String currentState;
@@ -70,6 +71,14 @@ public class StateManager extends JPanel
      * Etykiety używane do komunikacji ze światem zewnętrznym.
      */
     private final JLabel LeftTop,LeftMiddle,LeftBottom,Top,Center,RightTop,RightMiddle,RightBottom;
+
+
+    Sound sounds_play = new Sound();
+
+
+    Random generator = new Random();
+
+    private int random_number;
 
     /**
      * Jedyny konstruktor klasy.
@@ -198,7 +207,15 @@ public class StateManager extends JPanel
      */
     private boolean deposit(Wallet cash)
     {
-        if(!currentState.equals("INPUT"))return false;
+        if(!currentState.equals("INPUT")) {
+            return false;
+        }
+        sounds_play.playSound("/dzwiek_bankomatu.wav");
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return user.deposit(cash);
     }
 
@@ -221,115 +238,115 @@ public class StateManager extends JPanel
     /**
      * Metoda służąca do odświeżania zawartości ekranu.
      */
-     public void updateVisible()
+    public void updateVisible()
     {
-       if(currentState.equals("IDLE"))
-       {
+        if(currentState.equals("IDLE"))
+        {
             LeftTop.setText("");
             LeftMiddle.setText("");
             LeftBottom.setText("");
             Top.setText("Please insert card...");
             Center.setText("");
             RightTop.setText("");
-           RightMiddle.setText("");
-           RightBottom.setText("");
-       }
-       else if(currentState.equals("PIN"))
-       {
+            RightMiddle.setText("");
+            RightBottom.setText("");
+        }
+        else if(currentState.equals("PIN"))
+        {
 
-           LeftTop.setText("");
-           LeftMiddle.setText("");
-           LeftBottom.setText("");
-           Top.setText("PIN:");
-           StringBuilder code = new StringBuilder("");
-           for(int i=0;i<pinIndex;++i)code.append("*");
-           Center.setText(code.toString());
-           RightTop.setText("");
-           RightMiddle.setText("");
-           RightBottom.setText("");
-       }
-       else if(currentState.equals("OP_SEL"))
-       {
-           LeftTop.setText("Withdraw");
-           LeftMiddle.setText("Deposit");
-           LeftBottom.setText("Check account state");
-           Top.setText("Choose operation");
-           Center.setText("");
-           RightTop.setText("Change PIN");
-           RightMiddle.setText("");
-           RightBottom.setText("");
+            LeftTop.setText("");
+            LeftMiddle.setText("");
+            LeftBottom.setText("");
+            Top.setText("PIN:");
+            StringBuilder code = new StringBuilder("");
+            for(int i=0;i<pinIndex;++i)code.append("*");
+            Center.setText(code.toString());
+            RightTop.setText("");
+            RightMiddle.setText("");
+            RightBottom.setText("");
+        }
+        else if(currentState.equals("OP_SEL"))
+        {
+            LeftTop.setText("Withdraw");
+            LeftMiddle.setText("Deposit");
+            LeftBottom.setText("Check account state");
+            Top.setText("Choose operation");
+            Center.setText("");
+            RightTop.setText("Change PIN");
+            RightMiddle.setText("");
+            RightBottom.setText("");
 
-       }
-       else if(currentState.equals("CREDIT"))
-       {
-           LeftTop.setText("");
-           LeftMiddle.setText("");
-           LeftBottom.setText("");
-           Top.setText("Your credit is:");
-           Center.setText(user.getCard().checkCredit()+" "+currency);
-           RightTop.setText("");
-           RightMiddle.setText("");
-           RightBottom.setText("");
-       }
-       else if(currentState.equals("OUTPUT"))
-       {
-           if(!isOtherAmountSelected)
-           {
-               LeftTop.setText("10");
-               LeftMiddle.setText("20");
-               LeftBottom.setText("50");
-               Top.setText("Please select amount of money to withdraw");
-               Center.setText("");
-               RightTop.setText("100");
-               RightMiddle.setText("200");
-               RightBottom.setText("Other...");
-           }
-           else
-           {
-               LeftTop.setText("");
-               LeftMiddle.setText("");
-               LeftBottom.setText("");
-               Top.setText("Please enter value:");
-               Center.setText(""+moneyToBurn);
-               RightTop.setText("");
-               RightMiddle.setText("");
-               RightBottom.setText("");
-           }
-       }
-       else if(currentState.equals("SUMMARY"))
-       {
-           LeftTop.setText("");
-           LeftMiddle.setText("");
-           LeftBottom.setText("");
-           Top.setText("Do you wish to take receipt?");
-           Center.setText("");
-           RightTop.setText("Yes");
-           RightMiddle.setText("");
-           RightBottom.setText("No");
-       }
-       else if(currentState.equals("INPUT"))
-       {
-           LeftTop.setText("");
-           LeftMiddle.setText("");
-           LeftBottom.setText("");
-           Top.setText("Put your banknotes into deposit");
-           Center.setText("slot and press ENTER");
-           RightTop.setText("");
-           RightMiddle.setText("");
-           RightBottom.setText("");
+        }
+        else if(currentState.equals("CREDIT"))
+        {
+            LeftTop.setText("");
+            LeftMiddle.setText("");
+            LeftBottom.setText("");
+            Top.setText("Your credit is:");
+            Center.setText(user.getCard().checkCredit()+" "+currency);
+            RightTop.setText("");
+            RightMiddle.setText("");
+            RightBottom.setText("");
+        }
+        else if(currentState.equals("OUTPUT"))
+        {
+            if(!isOtherAmountSelected)
+            {
+                LeftTop.setText("10");
+                LeftMiddle.setText("20");
+                LeftBottom.setText("50");
+                Top.setText("Please select amount of money to withdraw");
+                Center.setText("");
+                RightTop.setText("100");
+                RightMiddle.setText("200");
+                RightBottom.setText("Other...");
+            }
+            else
+            {
+                LeftTop.setText("");
+                LeftMiddle.setText("");
+                LeftBottom.setText("");
+                Top.setText("Please enter value:");
+                Center.setText(""+moneyToBurn);
+                RightTop.setText("");
+                RightMiddle.setText("");
+                RightBottom.setText("");
+            }
+        }
+        else if(currentState.equals("SUMMARY"))
+        {
+            LeftTop.setText("");
+            LeftMiddle.setText("");
+            LeftBottom.setText("");
+            Top.setText("Do you wish to take receipt?");
+            Center.setText("");
+            RightTop.setText("Yes");
+            RightMiddle.setText("");
+            RightBottom.setText("No");
+        }
+        else if(currentState.equals("INPUT"))
+        {
+            LeftTop.setText("");
+            LeftMiddle.setText("");
+            LeftBottom.setText("");
+            Top.setText("Put your banknotes into deposit");
+            Center.setText("slot and press ENTER");
+            RightTop.setText("");
+            RightMiddle.setText("");
+            RightBottom.setText("");
 
-       }
-       else if(currentState.equals("CHANGE"))
-       {
-           LeftTop.setText("");
-           LeftMiddle.setText("");
-           LeftBottom.setText("");
-           Top.setText("Enter new PIN");
-           Center.setText("" + "*".repeat(Math.max(0, pinIndex)));
-           RightTop.setText("");
-           RightMiddle.setText("");
-           RightBottom.setText("");
-       }
+        }
+        else if(currentState.equals("CHANGE"))
+        {
+            LeftTop.setText("");
+            LeftMiddle.setText("");
+            LeftBottom.setText("");
+            Top.setText("Enter new PIN");
+            Center.setText("" + "*".repeat(Math.max(0, pinIndex)));
+            RightTop.setText("");
+            RightMiddle.setText("");
+            RightBottom.setText("");
+        }
 
         this.repaint();
     }
@@ -343,15 +360,15 @@ public class StateManager extends JPanel
     /**
      * Metoda resetująca ustawienia karty (liczbę prób i kod PIN).
      */
-     private void resetCard()
+    private void resetCard()
     {
         pinIndex = 0;
         failsNo = 3;
     }
     /**
-    * Metoda pozwalająca na zmianę użytkownika bankomatu.
-    * @param newUser <b style="color:#541704;">User</b> - Nowy użytkownik bankomatu.
-    */
+     * Metoda pozwalająca na zmianę użytkownika bankomatu.
+     * @param newUser <b style="color:#541704;">User</b> - Nowy użytkownik bankomatu.
+     */
     public void switchUser(User newUser)
     {
         user = newUser;
@@ -443,7 +460,7 @@ public class StateManager extends JPanel
                     this.returnCard();
                     return 0;
                 }
-                 return -1;
+                return -1;
             }
             return -1;
         }
@@ -501,9 +518,27 @@ public class StateManager extends JPanel
      */
     private int tryWithdraw(int value)
     {
+
+
         if(user.withdraw(value))
         {
             System.out.println("Withdraw success!");
+            random_number = generator.nextInt(2);
+            if(random_number == 0) {
+                sounds_play.playSound("/wysuwanie_gotowki.wav");
+                try {
+                    Thread.sleep(4000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }else if(random_number == 1) {
+                sounds_play.playSound("/wysuwanie_gotowki2.wav");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             changeState(states[5]);
             this.returnCard();
             return 0;
@@ -518,6 +553,8 @@ public class StateManager extends JPanel
      */
     private int proceedWithdraw(int signal)
     {
+
+
         if(signal == -1 && !isOtherAmountSelected)
         {
             moneyToBurn = 10;
@@ -526,7 +563,7 @@ public class StateManager extends JPanel
         else if(signal == -2 && !isOtherAmountSelected)
         {
             moneyToBurn = 20;
-           return  tryWithdraw(20);
+            return  tryWithdraw(20);
         }
         else if(signal == -3 && !isOtherAmountSelected)
         {
@@ -566,7 +603,7 @@ public class StateManager extends JPanel
                 if(user.withdraw(moneyToBurn))
                 {
                     System.out.println("Withdraw success!");
-                   changeState(states[5]);
+                    changeState(states[5]);
                     this.returnCard();
                     return 0;
                 }
@@ -586,17 +623,17 @@ public class StateManager extends JPanel
             else if(signal == -10)
             {
 
-               System.out.println("Operation Cancelled! Going back to IDLE");
-               changeState(states[0]);
-               this.returnCard();
-               return 0;
+                System.out.println("Operation Cancelled! Going back to IDLE");
+                changeState(states[0]);
+                this.returnCard();
+                return 0;
             }
         }
         else
         {
             if(signal == -10)
             {
-               System.out.println("Operation Cancelled! Going back to IDLE");
+                System.out.println("Operation Cancelled! Going back to IDLE");
                 changeState(states[0]);
                 this.returnCard();
                 return 0;
@@ -647,9 +684,12 @@ public class StateManager extends JPanel
                 }
                 else {
                     failsNo--;
+                    sounds_play.playSound("/dlugie_pikanie_jedno.wav");
                     if(failsNo == 0)
                     {
                         user.blockCard();
+                        sounds_play.playSound("/dlugie_pikanie_kilka.wav");
+
                         System.out.println("Card locked!");
                     }
                     else {
@@ -708,7 +748,7 @@ public class StateManager extends JPanel
             writer.write("Name: <b>"+user.Name+"</b><br>Surname: <b>"+user.Surname+"</b><br>PIN code compliant<br>");
             if(lastState.equals("OUTPUT"))
             {
-            writer.write("Withdraw value: <b>"+ moneyToBurn+"</b> "+Settings.currency+"<br>");
+                writer.write("Withdraw value: <b>"+ moneyToBurn+"</b> "+Settings.currency+"<br>");
             }
             else if(lastState.equals("CHANGE"))
             {
@@ -750,7 +790,7 @@ public class StateManager extends JPanel
                 returnCode = proceedOp(signal);
                 break;
             case "CHANGE":
-               returnCode = proceedChange(signal);
+                returnCode = proceedChange(signal);
                 break;
             case "CREDIT":
                 returnCode = proceedCredit(signal);
@@ -783,10 +823,10 @@ public class StateManager extends JPanel
                 returnCode = proceedWithdraw(signal);
                 break;
             case "PIN":
-               returnCode = proceedPIN(signal);
+                returnCode = proceedPIN(signal);
                 break;
             case "SUMMARY":
-                 //tutaj operacja wyboru drukowania potwierdzenia
+                //tutaj operacja wyboru drukowania potwierdzenia
                 if(signal == -4) {
                     System.out.println("Printing confirmation...");
                     printConfirm();
