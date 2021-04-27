@@ -424,6 +424,12 @@ public class StateManager extends JPanel
             System.out.println("You selected changing your PIN.");
             return 0;
         }
+        else if(signal == -10)
+        {
+            changeState(states[0]);
+            this.returnCard();
+            return 0;
+        }
         System.out.println("Please select operation!");
         return -2;
     }
@@ -518,8 +524,6 @@ public class StateManager extends JPanel
      */
     private int tryWithdraw(int value)
     {
-
-
         if(user.withdraw(value))
         {
             System.out.println("Withdraw success!");
@@ -531,7 +535,9 @@ public class StateManager extends JPanel
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }else if(random_number == 1) {
+            }
+            else
+            {
                 sounds_play.playSound("/wysuwanie_gotowki2.wav");
                 try {
                     Thread.sleep(2000);

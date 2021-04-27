@@ -42,4 +42,13 @@ class Account
        credit += gap;
        return true;
     }
+
+    /**
+     * Metoda do administracyjnego ustawienia stanu konta.
+     * @param credit <b style="color:#B45700;">double</b>  - Nowy stan konta.
+     */
+    protected void adminSetCredit(double credit)
+    {
+        this.credit = credit;
+    }
 }

@@ -1,5 +1,7 @@
 package manager;
 
+import user.CreditCard;
+
 /**
  * Klasa <i>ManagerMain</i> będąca główną klasą dla menadżera zapisów bankomatu.
  */
@@ -10,6 +12,7 @@ public class ManagerMain {
      */
     public static void main(String []args)
     {
-
+        new ManagerWindow();
     }
+
 }

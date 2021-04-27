@@ -43,6 +43,17 @@ public class CreditCard extends Account
     }
 
     /**
+     * Administracyjne ustawienie PINu - używane w programie do edycji zapisu.
+     * @param PIN <b style="color:#B45700;">int</b> - Nowy kod PIN.
+     */
+    protected void adminPINSet(int PIN){PINNo = PIN;}
+
+    /**
+     * Administracyjne ustawienie stanu konta - do programu do edycji zapisów.
+     * @param credit <b style="color:#B45700;">double</b> - Nowy stan konta.
+     */
+    protected void adminSetCredit(double credit){super.adminSetCredit(credit);}
+    /**
      * Metoda sprawdza czy wpisany PIN jest poprawny.
      * @param PIN <b style="color:#B45700;">int</b> - Sprawdzany numer PIN.
      * @return <b style="color:#B45700;">boolean</b> - Zwraca <i>true</i> jeśli numer PIN jest zgodny z tym przypisanym karcie.
