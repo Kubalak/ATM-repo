@@ -25,7 +25,7 @@ Classes `Main`,`StateManager`,`Window` have been moved to different package.<br>
 Class `XMLTools` has been changed to `abstract` in order to prevent accidental trial of creating an object of this class.
 In the `OP_SEL` state Labels have been moved to the left.
 
-##New functions:
+## New functions:
 Window position is now saved to the settings file.<br>
 You can check whether machine state has changed or not.<br>
 It is now possible to check between what states machine is switching.<br>
