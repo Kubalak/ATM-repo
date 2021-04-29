@@ -27,7 +27,7 @@ public class CreditCard extends Account
     public CreditCard(int PINNo, double value)
     {
         super(value);
-        this.PINNo = PINNo;
+        this.PINNo = Math.abs(PINNo)%10000;
         locked = false;
     }
 
@@ -38,7 +38,7 @@ public class CreditCard extends Account
     public CreditCard(int PINNo)
     {
         super(0.0);
-        this.PINNo = PINNo;
+        this.PINNo = Math.abs(PINNo)%10000;
         locked = false;
     }
 

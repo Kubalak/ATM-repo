@@ -21,7 +21,8 @@ class Account
      */
     public Account(double credit)
     {
-        this.credit = credit;
+        this.credit = 0.0;
+        if(credit>0)this.credit = credit;
     }
 
     /**
