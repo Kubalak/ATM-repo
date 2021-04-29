@@ -3,7 +3,7 @@ Atm project repository.
 
 # Changelog v0.6.0
 Created new class `Sound` that operates all necessary sound methods for the app.<br>
-Startet writing <a href = "https://junit.org"><b>JUnit5</b></a> tests.
+Started writing <a href = "https://junit.org"><b>JUnit5</b></a> tests.
 
 ## Tweaks
 `Window` class now uses objects of the `Sound` class to play certain sound or background music.
