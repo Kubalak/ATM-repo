@@ -21,8 +21,7 @@ class Account
      */
     public Account(double credit)
     {
-        this.credit = 0.0;
-        if(credit>0)this.credit = credit;
+        this.credit = credit;
     }
 
     /**
@@ -42,14 +41,5 @@ class Account
         if(gap < 0.0 && credit + gap < 0.0)return false;
        credit += gap;
        return true;
-    }
-
-    /**
-     * Metoda do administracyjnego ustawienia stanu konta.
-     * @param credit <b style="color:#B45700;">double</b>  - Nowy stan konta.
-     */
-    protected void adminSetCredit(double credit)
-    {
-        this.credit = credit;
     }
 }

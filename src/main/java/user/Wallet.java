@@ -53,25 +53,16 @@ public class Wallet
      * @param what <b style="color:#0B5E03;">String</b> - Nazwa banknotu, którego ilość ma być wpłacona.
      * @param amount <b style="color:#B45700;">int</b> - Ilość sztuk danego banknotu.
      */
-    public boolean cashIn(String what, int amount)
+    public void cashIn(String what, int amount)
     {
-        if(amount<0||what==null)
-        {
-            System.out.println("Operation not permitted!");
-            return  false;
-        }
+        if(amount<0||what==null)System.out.println("Operation not permitted!");
         else if(what.toLowerCase().equals("10"))tens+=amount;
         else if(what.toLowerCase().equals("20"))twenties+=amount;
         else if(what.toLowerCase().equals("50"))fifties+=amount;
         else if(what.toLowerCase().equals("100"))hundreds+=amount;
         else if(what.toLowerCase().equals("200"))two_hundreds+=amount;
         else if(what.toLowerCase().equals("500"))five_hundreds+=amount;
-        else
-        {
-            System.out.println("No banknote available!");
-            return false;
-        }
-        return true;
+        else System.out.println("No banknote available!");
     }
 
     /**
@@ -89,12 +80,9 @@ public class Wallet
      * Realizuje tą samą operację co drugi z konstruktorów,
      * @param cash <b style="color:#B45700;">int</b> - Wpłacana gotówka.
      */
-    public boolean cashIn(int cash)
+    public void cashIn(int cash)
     {
-        if(cash<0) {
-            System.out.println("Cannot insert value lower than 0!");
-            return false;
-        }
+        if(cash<0) System.out.println("Cannot insert value lower than 0!");
         else {
              five_hundreds += cash / 500;
              cash %= 500;
@@ -109,7 +97,6 @@ public class Wallet
              tens += cash / 10;
 
         }
-        return true;
     }
 
     /**

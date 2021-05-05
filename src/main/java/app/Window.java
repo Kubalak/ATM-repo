@@ -4,17 +4,16 @@ import user.Wallet;
 import sound.Sound;
 import xml.XMLTools;
 
+import javax.print.DocFlavor;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Objects;
 
 /**
@@ -36,6 +35,10 @@ public class Window extends JFrame implements ActionListener{
      * Przycisk używzany przez główne okno - klawisze specjalne kalwisze na keypadzie.
      */
    private final JButton  keyEnter, keyDelete, keyClear,keyCancel,keyCardtestonly;
+
+
+
+
     /**
      * Przyciski używzany przez główne okno - operacje przekazywania gotówki.
      */
@@ -134,12 +137,7 @@ private void updatePos()
         JPanel bottom = new JPanel();
         JPanel center = new JPanel();
 
-        ImageIcon keypadImage = new ImageIcon("D:\\Projekty Java\\ATM-repo-Project\\textures\\KEYPAD_TEXTURE.png");
         JPanel keypad = new JPanel();
-
-
-
-
 
 
 
@@ -170,6 +168,9 @@ private void updatePos()
         bottom.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         center.setBorder(BorderFactory.createLineBorder(Color.BLACK,2,true));
         keypad.setBorder(BorderFactory.createLineBorder(Color.BLACK,2,true));
+
+
+
 
 
         keyNumber1 = new JButton();
@@ -211,11 +212,11 @@ private void updatePos()
         WLabels[8].setText("200 x"+temporary.getAmount("200"));
         WLabels[10].setText("500 x"+temporary.getAmount("500"));
 
-        keyEnter = new JButton("Enter");
-        keyDelete = new JButton("Delete");
-        keyClear = new JButton("Clear");
-        keyCancel = new JButton("Cancel");
-        keyCardtestonly = new JButton("Insert Card");
+        keyEnter = new JButton();
+        keyDelete = new JButton();
+        keyClear = new JButton();
+        keyCancel = new JButton();
+        keyCardtestonly = new JButton();
 
 
 
@@ -229,115 +230,213 @@ private void updatePos()
 
 
         keyNumber1.setBounds(20,60,50,50);
-        keyNumber1.setText("1");
-        keyNumber1.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyNumber1.setBackground(null);
+        keyNumber1.setContentAreaFilled(false);
+        keyNumber1.setBorder(null);
         keyNumber1.setFocusable(false);
         keyNumber1.addActionListener(this);
 
 
+
+
+
         keyNumber2.setBounds(90,60,50,50);
-        keyNumber2.setText("2");
-        keyNumber2.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyNumber2.setBackground(null);
+        keyNumber2.setContentAreaFilled(false);
+        keyNumber2.setBorder(null);
         keyNumber2.setFocusable(false);
         keyNumber2.addActionListener(this);
 
         keyNumber3.setBounds(160,60,50,50);
-
-        keyNumber3.setText("3");
-        keyNumber3.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyNumber3.setBackground(null);
+        keyNumber3.setContentAreaFilled(false);
+        keyNumber3.setBorder(null);
         keyNumber3.setFocusable(false);
         keyNumber3.addActionListener(this);
 
         keyNumber4.setBounds(20,130,50,50);
-        keyNumber4.setText("4");
-        keyNumber4.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyNumber4.setBackground(null);
+        keyNumber4.setContentAreaFilled(false);
+        keyNumber4.setBorder(null);
         keyNumber4.setFocusable(false);
         keyNumber4.addActionListener(this);
 
         keyNumber5.setBounds(90,130,50,50);
-        keyNumber5.setText("5");
-        keyNumber5.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyNumber5.setBackground(null);
+        keyNumber5.setContentAreaFilled(false);
+        keyNumber5.setBorder(null);
         keyNumber5.setFocusable(false);
         keyNumber5.addActionListener(this);
 
         keyNumber6.setBounds(160,130,50,50);
-        keyNumber6.setText("6");
-        keyNumber6.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyNumber6.setBackground(null);
+        keyNumber6.setContentAreaFilled(false);
+        keyNumber6.setBorder(null);
         keyNumber6.setFocusable(false);
         keyNumber6.addActionListener(this);
 
         keyNumber7.setBounds(20,200,50,50);
-        keyNumber7.setText("7");
-        keyNumber7.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyNumber7.setBackground(null);
+        keyNumber7.setContentAreaFilled(false);
+        keyNumber7.setBorder(null);
         keyNumber7.setFocusable(false);
         keyNumber7.addActionListener(this);
 
         keyNumber8.setBounds(90,200,50,50);
-        keyNumber8.setText("8");
-        keyNumber8.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyNumber8.setBackground(null);
+        keyNumber8.setContentAreaFilled(false);
+        keyNumber8.setBorder(null);
         keyNumber8.setFocusable(false);
         keyNumber8.addActionListener(this);
 
         keyNumber9.setBounds(160,200,50,50);
-        keyNumber9.setText("9");
-        keyNumber9.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyNumber9.setBackground(null);
+        keyNumber9.setContentAreaFilled(false);
+        keyNumber9.setBorder(null);
         keyNumber9.setFocusable(false);
         keyNumber9.addActionListener(this);
 
         keyNumber0.setBounds(60,270,50,50);
-        keyNumber0.setText("0");
-        keyNumber0.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyNumber0.setBackground(null);
+        keyNumber0.setContentAreaFilled(false);
+        keyNumber0.setBorder(null);
         keyNumber0.setFocusable(false);
         keyNumber0.addActionListener(this);
 
         keyNumber000.setBounds(128,270,80,50);
-        keyNumber000.setText("000");
-        keyNumber000.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyNumber000.setBackground(null);
+        keyNumber000.setContentAreaFilled(false);
+        keyNumber000.setBorder(null);
         keyNumber000.setFocusable(false);
         keyNumber000.addActionListener(this);
 
         keyLeft1.setBounds(25,50,50,50);
+        keyLeft1.setBackground(null);
+        keyLeft1.setContentAreaFilled(false);
+        keyLeft1.setBorder(null);
+        keyLeft1.setFocusable(false);
         keyLeft1.addActionListener(this);
 
         keyLeft2.setBounds(25,160,50,50);
+        keyLeft2.setBackground(null);
+        keyLeft2.setContentAreaFilled(false);
+        keyLeft2.setBorder(null);
+        keyLeft2.setFocusable(false);
         keyLeft2.addActionListener(this);
 
         keyLeft3.setBounds(25,270,50,50);
+        keyLeft3.setBackground(null);
+        keyLeft3.setContentAreaFilled(false);
+        keyLeft3.setBorder(null);
+        keyLeft3.setFocusable(false);
         keyLeft3.addActionListener(this);
 
         keyRight1.setBounds(25,50,50,50);
+        keyRight1.setBackground(null);
+        keyRight1.setContentAreaFilled(false);
+        keyRight1.setBorder(null);
+        keyRight1.setFocusable(false);
         keyRight1.addActionListener(this);
 
         keyRight2.setBounds(25,160,50,50);
+        keyRight2.setBackground(null);
+        keyRight2.setContentAreaFilled(false);
+        keyRight2.setBorder(null);
+        keyRight2.setFocusable(false);
         keyRight2.addActionListener(this);
 
         keyRight3.setBounds(25,270,50,50);
+        keyRight3.setBackground(null);
+        keyRight3.setContentAreaFilled(false);
+        keyRight3.setBorder(null);
+        keyRight3.setFocusable(false);
         keyRight3.addActionListener(this);
 
         keyEnter.setBounds(250,60,100,50);
-        keyEnter.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyEnter.setBackground(null);
+        keyEnter.setContentAreaFilled(false);
+        keyEnter.setBorder(null);
         keyEnter.setFocusable(false);
         keyEnter.addActionListener(this);
 
         keyDelete.setBounds(250,130,100,50);
-        keyDelete.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyDelete.setBackground(null);
+        keyDelete.setContentAreaFilled(false);
+        keyDelete.setBorder(null);
         keyDelete.setFocusable(false);
         keyDelete.addActionListener(this);
 
         keyClear.setBounds(250,200,100,50);
-        keyClear.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyClear.setBackground(null);
+        keyClear.setContentAreaFilled(false);
+        keyClear.setBorder(null);
         keyClear.setFocusable(false);
         keyClear.addActionListener(this);
 
         keyCancel.setBounds(250,270,100,50);
-        keyCancel.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyCancel.setBackground(null);
+        keyCancel.setContentAreaFilled(false);
+        keyCancel.setBorder(null);
         keyCancel.setFocusable(false);
         keyCancel.addActionListener(this);
 
         keyCardtestonly.setBounds(550,40,175,100);
-        keyCardtestonly.setFont(new Font("Comic Sans",Font.BOLD,20));
+        keyCardtestonly.setBackground(null);
+        keyCardtestonly.setContentAreaFilled(false);
+        keyCardtestonly.setBorder(null);
         keyCardtestonly.setFocusable(false);
         keyCardtestonly.addActionListener(this);
+
+        try{
+            keyNumber1.setIcon(new ImageIcon(this.getClass().getResource("/1.png")));
+            keyNumber1.setPressedIcon(new ImageIcon(this.getClass().getResource("/1_w.png")));
+            keyNumber2.setIcon(new ImageIcon(this.getClass().getResource("/2.png")));
+            keyNumber2.setPressedIcon(new ImageIcon(this.getClass().getResource("/2_w.png")));
+            keyNumber3.setIcon(new ImageIcon(this.getClass().getResource("/3.png")));
+            keyNumber3.setPressedIcon(new ImageIcon(this.getClass().getResource("/3_w.png")));
+            keyNumber4.setIcon(new ImageIcon(this.getClass().getResource("/4.png")));
+            keyNumber4.setPressedIcon(new ImageIcon(this.getClass().getResource("/4_w.png")));
+            keyNumber5.setIcon(new ImageIcon(this.getClass().getResource("/5.png")));
+            keyNumber5.setPressedIcon(new ImageIcon(this.getClass().getResource("/5_w.png")));
+            keyNumber6.setIcon(new ImageIcon(this.getClass().getResource("/6.png")));
+            keyNumber6.setPressedIcon(new ImageIcon(this.getClass().getResource("/6_w.png")));
+            keyNumber7.setIcon(new ImageIcon(this.getClass().getResource("/7.png")));
+            keyNumber7.setPressedIcon(new ImageIcon(this.getClass().getResource("/7_w.png")));
+            keyNumber8.setIcon(new ImageIcon(this.getClass().getResource("/8.png")));
+            keyNumber8.setPressedIcon(new ImageIcon(this.getClass().getResource("/8_w.png")));
+            keyNumber9.setIcon(new ImageIcon(this.getClass().getResource("/9.png")));
+            keyNumber9.setPressedIcon(new ImageIcon(this.getClass().getResource("/9_w.png")));
+            keyNumber0.setIcon(new ImageIcon(this.getClass().getResource("/0.png")));
+            keyNumber0.setPressedIcon(new ImageIcon(this.getClass().getResource("/0_w.png")));
+            keyNumber000.setIcon(new ImageIcon(this.getClass().getResource("/000.png")));
+            keyNumber000.setPressedIcon(new ImageIcon(this.getClass().getResource("/000_w.png")));
+            keyEnter.setIcon(new ImageIcon(this.getClass().getResource("/enter.png")));
+            keyEnter.setPressedIcon(new ImageIcon(this.getClass().getResource("/enter_w.png")));
+            keyDelete.setIcon(new ImageIcon(this.getClass().getResource("/delete.png")));
+            keyDelete.setPressedIcon(new ImageIcon(this.getClass().getResource("/delete_w.png")));
+            keyClear.setIcon(new ImageIcon(this.getClass().getResource("/clear.png")));
+            keyClear.setPressedIcon(new ImageIcon(this.getClass().getResource("/clear_w.png")));
+            keyCancel.setIcon(new ImageIcon(this.getClass().getResource("/cancel_b.png")));
+            keyCancel.setPressedIcon(new ImageIcon(this.getClass().getResource("/cancel_b_w.png")));
+            keyLeft1.setIcon(new ImageIcon(this.getClass().getResource("/arrow_right.png")));
+            keyLeft1.setPressedIcon(new ImageIcon(this.getClass().getResource("/arrow_right_w.png")));
+            keyLeft2.setIcon(new ImageIcon(this.getClass().getResource("/arrow_right.png")));
+            keyLeft2.setPressedIcon(new ImageIcon(this.getClass().getResource("/arrow_right_w.png")));
+            keyLeft3.setIcon(new ImageIcon(this.getClass().getResource("/arrow_right.png")));
+            keyLeft3.setPressedIcon(new ImageIcon(this.getClass().getResource("/arrow_right_w.png")));
+            keyRight1.setIcon(new ImageIcon(this.getClass().getResource("/arrow_left.png")));
+            keyRight1.setPressedIcon(new ImageIcon(this.getClass().getResource("/arrow_left_w.png")));
+            keyRight2.setIcon(new ImageIcon(this.getClass().getResource("/arrow_left.png")));
+            keyRight2.setPressedIcon(new ImageIcon(this.getClass().getResource("/arrow_left_w.png")));
+            keyRight3.setIcon(new ImageIcon(this.getClass().getResource("/arrow_left.png")));
+            keyRight3.setPressedIcon(new ImageIcon(this.getClass().getResource("/arrow_left_w.png")));
+            keyCardtestonly.setIcon(new ImageIcon(this.getClass().getResource("/card_slot_a.png")));
+            keyCardtestonly.setPressedIcon(new ImageIcon(this.getClass().getResource("/card_slot_in.png")));
+        }catch(NullPointerException e)
+        {
+            System.out.println(e);
+        }
+
 
         keypad.add(keyNumber1);
         keypad.add(keyNumber2);
@@ -383,9 +482,6 @@ private void updatePos()
         background.playSound("/dzwiek_bankomatu.wav");
         background.playBackgroundMusic("/szum.wav");
 
-
-
-
     }
 
     /**
@@ -395,16 +491,17 @@ private void updatePos()
     @Override
     public void actionPerformed(ActionEvent e)
     {
-
         Sound sounds_play = new Sound();
+
+
 
         if(e.getSource()==keyNumber0){
             State.sendSignal(0,operational);
             sounds_play.playSound("/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyNumber1){
-            State.sendSignal(1,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+                State.sendSignal(1, operational);
+                sounds_play.playSound("/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyNumber2){
             State.sendSignal(2,operational);
@@ -496,7 +593,7 @@ private void updatePos()
         }
         else if(e.getSource()==About)
         {
-            JOptionPane.showMessageDialog(null,"ATM simulator v0.6.0","Info",JOptionPane.INFORMATION_MESSAGE);//Sugeruję tutaj wykorzystać <version> </version> z pliku pom.xml na przykład jak zrobiono https://www.baeldung.com/java-accessing-maven-properties
+            JOptionPane.showMessageDialog(null,"ATM simulator v0.7.0","Info",JOptionPane.INFORMATION_MESSAGE);//Sugeruję tutaj wykorzystać <version> </version> z pliku pom.xml na przykład jak zrobiono https://www.baeldung.com/java-accessing-maven-properties
         }
         else if(e.getSource() == Exit)
         {
@@ -585,13 +682,6 @@ private void updatePos()
         }
         this.repaint();
     }
-
-
-
-
-
-
-
 }
 
 

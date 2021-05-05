@@ -5,11 +5,15 @@ import user.User;
 import user.Wallet;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Date;
 import java.util.Random;
+import app.Window;
+import javax.swing.Timer;
 import java.util.concurrent.TimeUnit;
 
 
@@ -38,7 +42,7 @@ public class StateManager extends JPanel
     /**
      * Stany weenętrzne bankomatu.
      */
-    private final String[] states = {"IDLE","OUTPUT","INPUT","PIN","OP_SEL","SUMMARY","CREDIT","CHANGE"};
+    private final String[] states = {"IDLE","OUTPUT","INPUT","PIN","OP_SEL","SUMMARY","CREDIT","CHANGE","WRONG_PIN","CARD_BLOCKED"};
     /**
      * Ostatni stan bankomatu.
      */
@@ -80,6 +84,12 @@ public class StateManager extends JPanel
 
     private int random_number;
 
+
+
+
+
+
+
     /**
      * Jedyny konstruktor klasy.
      * @param user <b style="color:#541704;">User</b> - Użytkownik, który będzie korzystał z bankomatu.
@@ -92,38 +102,38 @@ public class StateManager extends JPanel
         this.setBorder(null);
 
         LeftTop = new JLabel("");
-        LeftTop.setFont(new Font("Comic Sans MS",Font.PLAIN,20));
+        LeftTop.setFont(new Font("Consolas",Font.PLAIN,20));
         LeftTop.setBounds(20,65,200,30);
 
         LeftMiddle = new JLabel("");
-        LeftMiddle.setFont(new Font("Comic Sans MS",Font.PLAIN,20));
+        LeftMiddle.setFont(new Font("Consolas",Font.PLAIN,20));
         LeftMiddle.setBounds(20,175,200,30);
 
         LeftBottom = new JLabel("");
-        LeftBottom.setFont(new Font("Comic Sans MS",Font.PLAIN,20));
+        LeftBottom.setFont(new Font("Consolas",Font.PLAIN,20));
         LeftBottom.setBounds(20,285,200,30);
 
         RightTop = new JLabel("");
-        RightTop.setFont(new Font("Comic Sans MS",Font.PLAIN,20));
+        RightTop.setFont(new Font("Consolas",Font.PLAIN,20));
         RightTop.setBounds(350,65,200,30);
         RightTop.setHorizontalTextPosition(SwingConstants.RIGHT);
         RightTop.setHorizontalAlignment(SwingConstants.RIGHT);
 
         RightMiddle = new JLabel("");
-        RightMiddle.setFont(new Font("Comic Sans MS",Font.PLAIN,20));
+        RightMiddle.setFont(new Font("Consolas",Font.PLAIN,20));
         RightMiddle.setBounds(350,175,200,30);
         RightMiddle.setHorizontalTextPosition(SwingConstants.RIGHT);
         RightMiddle.setHorizontalAlignment(SwingConstants.RIGHT);
 
         RightBottom = new JLabel("");
-        RightBottom.setFont(new Font("Comic Sans MS",Font.PLAIN,20));
+        RightBottom.setFont(new Font("Consolas",Font.PLAIN,20));
         RightBottom.setBounds(350,285,200,30);
         RightBottom.setHorizontalTextPosition(SwingConstants.RIGHT);
         RightBottom.setHorizontalAlignment(SwingConstants.RIGHT);
 
         Top = new JLabel("Please insert card...");
-        Top.setFont(new Font("Comic Sans MS",Font.PLAIN,20));
-        Top.setBounds(150,100,300,30);
+        Top.setFont(new Font("Consolas",Font.PLAIN,23));
+        Top.setBounds(150,150,300,30);
         Top.setHorizontalTextPosition(SwingConstants.CENTER);
         Top.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -150,6 +160,8 @@ public class StateManager extends JPanel
         this.add(Center);
         this.repaint();
         System.out.println("Insert card.");
+
+
     }
 
     /**
@@ -245,7 +257,7 @@ public class StateManager extends JPanel
             LeftTop.setText("");
             LeftMiddle.setText("");
             LeftBottom.setText("");
-            Top.setText("Please insert card...");
+            Top.setText("Please insert card");
             Center.setText("");
             RightTop.setText("");
             RightMiddle.setText("");
@@ -260,6 +272,7 @@ public class StateManager extends JPanel
             Top.setText("PIN:");
             StringBuilder code = new StringBuilder("");
             for(int i=0;i<pinIndex;++i)code.append("*");
+            Center.setBounds(170,200,260,30);
             Center.setText(code.toString());
             RightTop.setText("");
             RightMiddle.setText("");
@@ -269,7 +282,7 @@ public class StateManager extends JPanel
         {
             LeftTop.setText("Withdraw");
             LeftMiddle.setText("Deposit");
-            LeftBottom.setText("Check account state");
+            LeftBottom.setText("Check account");
             Top.setText("Choose operation");
             Center.setText("");
             RightTop.setText("Change PIN");
@@ -295,7 +308,7 @@ public class StateManager extends JPanel
                 LeftTop.setText("10");
                 LeftMiddle.setText("20");
                 LeftBottom.setText("50");
-                Top.setText("Please select amount of money to withdraw");
+                Top.setText("Please select amount");
                 Center.setText("");
                 RightTop.setText("100");
                 RightMiddle.setText("200");
@@ -318,7 +331,7 @@ public class StateManager extends JPanel
             LeftTop.setText("");
             LeftMiddle.setText("");
             LeftBottom.setText("");
-            Top.setText("Do you wish to take receipt?");
+            Top.setText("Print receipt?");
             Center.setText("");
             RightTop.setText("Yes");
             RightMiddle.setText("");
@@ -329,7 +342,7 @@ public class StateManager extends JPanel
             LeftTop.setText("");
             LeftMiddle.setText("");
             LeftBottom.setText("");
-            Top.setText("Put your banknotes into deposit");
+            Top.setText("Put your banknotes in");
             Center.setText("slot and press ENTER");
             RightTop.setText("");
             RightMiddle.setText("");
@@ -343,6 +356,30 @@ public class StateManager extends JPanel
             LeftBottom.setText("");
             Top.setText("Enter new PIN");
             Center.setText("" + "*".repeat(Math.max(0, pinIndex)));
+            RightTop.setText("");
+            RightMiddle.setText("");
+            RightBottom.setText("");
+        }else if(currentState.equals("WRONG_PIN"))
+        {
+            LeftTop.setText("");
+            LeftMiddle.setText("");
+            LeftBottom.setText("");
+            Top.setText("TRY AGAIN:");
+            StringBuilder code = new StringBuilder("");
+            for(int i=0;i<pinIndex;++i)code.append("*");
+            Center.setBounds(170,200,260,30);
+            Center.setText(code.toString());
+            RightTop.setText("");
+            RightMiddle.setText("");
+            RightBottom.setText("");
+        }else if(currentState.equals("CARD_BLOCKED") && failsNo == 0)
+        {
+
+            LeftTop.setText("");
+            LeftMiddle.setText("");
+            LeftBottom.setText("");
+            Top.setText("Card locked!");
+            Center.setText("Press cancel to take back your card!");
             RightTop.setText("");
             RightMiddle.setText("");
             RightBottom.setText("");
@@ -422,12 +459,6 @@ public class StateManager extends JPanel
         {
             changeState(states[7]);
             System.out.println("You selected changing your PIN.");
-            return 0;
-        }
-        else if(signal == -10)
-        {
-            changeState(states[0]);
-            this.returnCard();
             return 0;
         }
         System.out.println("Please select operation!");
@@ -524,6 +555,8 @@ public class StateManager extends JPanel
      */
     private int tryWithdraw(int value)
     {
+
+
         if(user.withdraw(value))
         {
             System.out.println("Withdraw success!");
@@ -535,9 +568,7 @@ public class StateManager extends JPanel
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }
-            else
-            {
+            }else if(random_number == 1) {
                 sounds_play.playSound("/wysuwanie_gotowki2.wav");
                 try {
                     Thread.sleep(2000);
@@ -691,12 +722,14 @@ public class StateManager extends JPanel
                 else {
                     failsNo--;
                     sounds_play.playSound("/dlugie_pikanie_jedno.wav");
+
                     if(failsNo == 0)
                     {
+                        changeState(states[9]);
                         user.blockCard();
                         sounds_play.playSound("/dlugie_pikanie_kilka.wav");
-
                         System.out.println("Card locked!");
+
                     }
                     else {
                         System.out.println("Failure! Number of trials remaining: " + failsNo);

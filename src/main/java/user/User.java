@@ -143,11 +143,6 @@ public class User
     }
 
     /**
-     * Metoda zwraca wektor z kartami.
-     * @return <b style="color:#0B5E03;">Vector<CreditCard></b> - Wektor z kartami.
-     */
-    public Vector<CreditCard> getCards(){return cards;}
-    /**
      * Zwraca bieżącą kartę użytkownika.
      * @return <b style="color:#541704;">CreditCard</b> - Bieżąca karta.
      */
