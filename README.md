@@ -1,6 +1,10 @@
 # ATM-repo
 Atm project repository.
 
+# Changelog v0.7.0
+Added textures for buttons. Each button has a texture when pressed and when not pressed.<br>
+
+
 # Changelog v0.6.0
 Created new class `Sound` that operates all necessary sound methods for the app.<br>
 Started writing <a href = "https://junit.org"><b>JUnit5</b></a> tests.
