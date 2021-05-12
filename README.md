@@ -1,6 +1,14 @@
 # ATM-repo
 Atm project repository.
 
+# Changelog v0.8.0
+Added textures for other UI elements - banner, keypad and background.<br>
+App now uses system GUI style.<br>
+Changed wallet behaviour - it is now only accessible for deposit operations. In other states it is hidden.<br>
+App version is now read from <i>`VERSION`</i> file that is used as resource.<br>
+Added handling exceptions unhandled in other classes in `Main` class.<br>
+When unhandled exception is thrown user is infomed about this fact.
+
 # Changelog v0.7.0
 Added textures for buttons. Each button has a texture when pressed and when not pressed.<br>
 
