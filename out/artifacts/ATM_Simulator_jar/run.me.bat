@@ -1,1 +1,1 @@
-java -jar ATM_Simulator.jar
+java -Dfile.encoding=utf-8 -jar ATM_Simulator.jar
