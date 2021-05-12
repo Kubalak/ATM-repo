@@ -7,7 +7,8 @@ App now uses system GUI style.<br>
 Changed wallet behaviour - it is now only accessible for deposit operations. In other states it is hidden.<br>
 App version is now read from <i>`VERSION`</i> file that is used as resource.<br>
 Added handling exceptions unhandled in other classes in `Main` class.<br>
-When unhandled exception is thrown user is infomed about this fact.
+When unhandled exception is thrown user is infomed about this fact.<br>
+For generated *.jar file use <i>run.me.bat</i> to force JVM to run in UTF-8 encoding.
 
 # Changelog v0.7.0
 Added textures for buttons. Each button has a texture when pressed and when not pressed.<br>
