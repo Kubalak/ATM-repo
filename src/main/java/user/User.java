@@ -1,8 +1,6 @@
 package user;
 import xml.XMLTools;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -142,6 +140,11 @@ public class User
         return true;
     }
 
+    /**
+     * Metoda zwraca wektor z kartami.
+     * @return <b style="color:#0B5E03;">Vector<CreditCard></b> - Wektor z kartami.
+     */
+    public Vector<CreditCard> getCards(){return cards;}
     /**
      * Zwraca bieżącą kartę użytkownika.
      * @return <b style="color:#541704;">CreditCard</b> - Bieżąca karta.

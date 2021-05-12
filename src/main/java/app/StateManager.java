@@ -5,16 +5,12 @@ import user.User;
 import user.Wallet;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.Date;
 import java.util.Random;
-import app.Window;
-import javax.swing.Timer;
-import java.util.concurrent.TimeUnit;
+
 
 
 /*
@@ -98,8 +94,8 @@ public class StateManager extends JPanel
     {
         this.user = user;
         this.setLayout(null);
-        this.setBounds(0,0,600,500);
-        this.setBorder(null);
+        this.setBounds(0,0,584,329);
+        this.setBorder( BorderFactory.createLoweredBevelBorder());
 
         LeftTop = new JLabel("");
         LeftTop.setFont(new Font("Consolas",Font.PLAIN,20));
@@ -131,15 +127,15 @@ public class StateManager extends JPanel
         RightBottom.setHorizontalTextPosition(SwingConstants.RIGHT);
         RightBottom.setHorizontalAlignment(SwingConstants.RIGHT);
 
-        Top = new JLabel("Please insert card...");
+        Top = new JLabel("Please insert card");
         Top.setFont(new Font("Consolas",Font.PLAIN,23));
-        Top.setBounds(150,150,300,30);
+        Top.setBounds(140,150,320,30);
         Top.setHorizontalTextPosition(SwingConstants.CENTER);
         Top.setHorizontalAlignment(SwingConstants.CENTER);
 
         Center = new JLabel("");
-        Center.setFont(new Font("Comic Sans MS",Font.PLAIN,20));
-        Center.setBounds(170,230,260,30);
+        Center.setFont(new Font("Consolas",Font.PLAIN,23));
+        Center.setBounds(130,230,340,30);
         Center.setHorizontalTextPosition(SwingConstants.CENTER);
         Center.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -272,7 +268,6 @@ public class StateManager extends JPanel
             Top.setText("PIN:");
             StringBuilder code = new StringBuilder("");
             for(int i=0;i<pinIndex;++i)code.append("*");
-            Center.setBounds(170,200,260,30);
             Center.setText(code.toString());
             RightTop.setText("");
             RightMiddle.setText("");
@@ -364,11 +359,8 @@ public class StateManager extends JPanel
             LeftTop.setText("");
             LeftMiddle.setText("");
             LeftBottom.setText("");
-            Top.setText("TRY AGAIN:");
-            StringBuilder code = new StringBuilder("");
-            for(int i=0;i<pinIndex;++i)code.append("*");
-            Center.setBounds(170,200,260,30);
-            Center.setText(code.toString());
+            Top.setText("TRY AGAIN");
+            Center.setText("PRESS ENTER TO CONTINUE");
             RightTop.setText("");
             RightMiddle.setText("");
             RightBottom.setText("");
@@ -379,7 +371,7 @@ public class StateManager extends JPanel
             LeftMiddle.setText("");
             LeftBottom.setText("");
             Top.setText("Card locked!");
-            Center.setText("Press cancel to take back your card!");
+            Center.setText("PRESS ENTER TO CONTINUE");
             RightTop.setText("");
             RightMiddle.setText("");
             RightBottom.setText("");
@@ -722,14 +714,14 @@ public class StateManager extends JPanel
                 else {
                     failsNo--;
                     sounds_play.playSound("/dlugie_pikanie_jedno.wav");
+                    changeState(states[8]);
 
                     if(failsNo == 0)
                     {
-                        changeState(states[9]);
                         user.blockCard();
+                        changeState(states[9]);
                         sounds_play.playSound("/dlugie_pikanie_kilka.wav");
                         System.out.println("Card locked!");
-
                     }
                     else {
                         System.out.println("Failure! Number of trials remaining: " + failsNo);
@@ -881,6 +873,20 @@ public class StateManager extends JPanel
                     changeState(states[0]);
                 }
                 break;
+            case "WRONG_PIN":
+                if(signal == -7)
+                {
+                    returnCode = 0;
+                    changeState(states[3]);
+                }
+                break;
+            case "CARD_BLOCKED":
+                if(signal == -7)
+                {
+                    returnCode = 0;
+                    changeState(states[0]);
+                    returnCard();
+                }
         }
         if(returnCode == -2)System.out.println("Unrecognized operation!");
         updateVisible();

@@ -47,7 +47,7 @@ public abstract class Settings
     {
         try
         {
-            FileWriter writer = new FileWriter(path!=null?(path+"/settings.xml"):"userdata/settings.xml");
+            FileWriter writer = new FileWriter(path!=null?(path+"settings.xml"):"userdata/settings.xml");
             writer.write("<?xml version=\"1.0\"?>\n");
             writer.write("<users>\n"+ XMLTools.toXML(currency,"currency")+"\n");
             writer.write(XMLTools.toXML(posX,"posX")+"\n");
@@ -84,7 +84,7 @@ public abstract class Settings
                     else System.out.println("Directory creation failed");
                 }
             }
-            File input = new File(path==null?"userdata/settings.xml":(path+"/settings.xml"));
+            File input = new File(path==null?"userdata/settings.xml":(path+"settings.xml"));
             Scanner reader = new Scanner(input);
             StringBuilder data = new StringBuilder();
             String tmp;

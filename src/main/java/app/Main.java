@@ -1,10 +1,7 @@
 package app;
-
+import javax.swing.*;
 import settings.Settings;
 
-import javax.swing.*;
-import java.lang.reflect.Field;
-import java.nio.charset.Charset;
 
 /**
  * Główna klasa programu wraz ze statyczną metodą <i>main</i>.
@@ -23,7 +20,20 @@ public class Main {
     public static void main(String[] args)
     {
 
+        try{
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
         Settings.loadSettings();
-        Window okno = new Window((args.length > 0) && args[args.length-1].equals("default"));
+        try {
+           new Window((args.length > 0) && args[args.length - 1].equals("default"));
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(null,"Exception thrown \""+e.getMessage()+"\"","Critical fault!",JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

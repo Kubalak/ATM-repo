@@ -27,7 +27,7 @@ public class CreditCard extends Account
     public CreditCard(int PINNo, double value)
     {
         super(value);
-        this.PINNo = PINNo;
+        this.PINNo = Math.abs(PINNo)%10000;
         locked = false;
     }
 
@@ -38,10 +38,21 @@ public class CreditCard extends Account
     public CreditCard(int PINNo)
     {
         super(0.0);
-        this.PINNo = PINNo;
+        this.PINNo = Math.abs(PINNo)%10000;
         locked = false;
     }
 
+    /**
+     * Administracyjne ustawienie PINu - używane w programie do edycji zapisu.
+     * @param PIN <b style="color:#B45700;">int</b> - Nowy kod PIN.
+     */
+    protected void adminPINSet(int PIN){PINNo = PIN;}
+
+    /**
+     * Administracyjne ustawienie stanu konta - do programu do edycji zapisów.
+     * @param credit <b style="color:#B45700;">double</b> - Nowy stan konta.
+     */
+    protected void adminSetCredit(double credit){super.adminSetCredit(credit);}
     /**
      * Metoda sprawdza czy wpisany PIN jest poprawny.
      * @param PIN <b style="color:#B45700;">int</b> - Sprawdzany numer PIN.

@@ -2,18 +2,9 @@ package app;
 import settings.Settings;
 import user.Wallet;
 import sound.Sound;
-import xml.XMLTools;
-
-import javax.print.DocFlavor;
-import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Objects;
 
 /**
@@ -35,7 +26,6 @@ public class Window extends JFrame implements ActionListener{
      * Przycisk używzany przez główne okno - klawisze specjalne kalwisze na keypadzie.
      */
    private final JButton  keyEnter, keyDelete, keyClear,keyCancel,keyCardtestonly;
-
 
 
 
@@ -131,47 +121,40 @@ private void updatePos()
         if(!defaultPos)this.setLocation(Settings.posX,Settings.posY);
         operational = new Wallet(true);
         temporary = Settings.users.get(Settings.currentUser()).getWallet().copy();
+
+
         JPanel top = new JPanel();
-        JPanel left = new JPanel();
-        JPanel right = new JPanel();
-        JPanel bottom = new JPanel();
+        JLayeredPane left = new JLayeredPane();
+        JLayeredPane right = new JLayeredPane();
+        JLayeredPane bottom = new JLayeredPane();
         JPanel center = new JPanel();
 
-        JPanel keypad = new JPanel();
+        JLayeredPane keypad = new JLayeredPane();
 
+        JLabel keypadBackground = new JLabel(new ImageIcon(this.getClass().getResource("/keypad.png")));
+        keypadBackground.setBounds(0,0,400,350);
+        keypad.add(keypadBackground, 0);
 
-
+        JLabel topBackground = new JLabel(new ImageIcon(this.getClass().getResource("/banner.png")));
+        topBackground.setBounds(0,10,100,100);
+        top.add(topBackground);
         bottom.setLayout(null);
         left.setLayout(null);
         right.setLayout(null);
         keypad.setLayout(null);
         center.setLayout(null);
-
-        top.setBackground(new Color(0xcfcfcf));
+        top.setBackground(new Color(0,106,67));
         left.setBackground(new Color(0xcfcfcf));
         right.setBackground(new Color(0xcfcfcf));
         bottom.setBackground(new Color(0xcfcfcf));
-        //center.setBackground(Color.WHITE);
-        keypad.setBackground(new Color(0xe6e6e6));
 
-        top.setPreferredSize(new Dimension(100,100));
+        top.setBounds(0,0,800,100);
         left.setPreferredSize(new Dimension(100,100));
         right.setPreferredSize(new Dimension(100,100));
         bottom.setPreferredSize(new Dimension(200,400));
-        center.setPreferredSize(new Dimension(300,300));
+        center.setBounds(0,0,584,329);
         keypad.setSize(400,350);
-        keypad.setLocation(120,40);
-
-        top.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        left.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        right.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        bottom.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        center.setBorder(BorderFactory.createLineBorder(Color.BLACK,2,true));
-        keypad.setBorder(BorderFactory.createLineBorder(Color.BLACK,2,true));
-
-
-
-
+        keypad.setLocation(100,40);
 
         keyNumber1 = new JButton();
         keyNumber2 = new JButton();
@@ -186,23 +169,28 @@ private void updatePos()
         keyNumber000 = new JButton();
 
 
-
-
         WalletOps = new JButton[12];
         WLabels = new JLabel[12];
         for(int i=0;i<12;i++)
         {
             WalletOps[i] = new JButton();
             WalletOps[i].setBounds(600 + i%2*40,150 + 40 * (i / 2) ,30,30);
-            WalletOps[i].setFont(new Font("Comic Sans",Font.PLAIN,5));
+            WalletOps[i].setOpaque(false);
+            WalletOps[i].setBackground(null);
+            WalletOps[i].setBorder(null);
+            WalletOps[i].setIcon(new ImageIcon(this.getClass().getResource((i%2==0)?"/plus.png":"/minus.png")));
+            WalletOps[i].setPressedIcon(new ImageIcon(this.getClass().getResource((i%2==0)?"/plus_w.png":"/minus_w.png")));
             WalletOps[i].setFocusable(false);
             WalletOps[i].addActionListener(this);
+            WalletOps[i].setVisible(false);
 
             WLabels[i] = new JLabel("x0");
-            WLabels[i].setFont(new Font("Comic Sans",Font.BOLD,15));
-            WLabels[i].setBounds(490 + i%2*150,150+ 40 * (i / 2) ,60+(i%2==0?40:0),30);
+            WLabels[i].setFont(new Font("Comic Sans",Font.BOLD,20));
+            WLabels[i].setForeground(new Color(0x33ff7d));
+            WLabels[i].setBounds(480 + i%2*170,150+ 40 * (i / 2) ,60+(i%2==0?40:0),30);
             WLabels[i].setHorizontalTextPosition(SwingConstants.RIGHT);
             WLabels[i].setHorizontalAlignment(SwingConstants.RIGHT);
+            WLabels[i].setVisible(false);
         }
 
         WLabels[0].setText("10 x"+temporary.getAmount("10"));
@@ -217,8 +205,6 @@ private void updatePos()
         keyClear = new JButton();
         keyCancel = new JButton();
         keyCardtestonly = new JButton();
-
-
 
        keyLeft1 = new JButton();
        keyLeft2 = new JButton();
@@ -235,9 +221,6 @@ private void updatePos()
         keyNumber1.setBorder(null);
         keyNumber1.setFocusable(false);
         keyNumber1.addActionListener(this);
-
-
-
 
 
         keyNumber2.setBounds(90,60,50,50);
@@ -437,38 +420,47 @@ private void updatePos()
             System.out.println(e);
         }
 
-
-        keypad.add(keyNumber1);
-        keypad.add(keyNumber2);
-        keypad.add(keyNumber3);
-        keypad.add(keyNumber4);
-        keypad.add(keyNumber5);
-        keypad.add(keyNumber6);
-        keypad.add(keyNumber7);
-        keypad.add(keyNumber8);
-        keypad.add(keyNumber9);
-        keypad.add(keyNumber0);
-        keypad.add(keyNumber000);
-        keypad.add(keyEnter);
-        keypad.add(keyDelete);
-        keypad.add(keyClear);
-        keypad.add(keyCancel);
-        bottom.add(keypad);
-        bottom.add(keyCardtestonly);
+        JLabel bottompanel =  new JLabel(new ImageIcon(this.getClass().getResource("/bottom.png")));
+        bottompanel.setBounds(0,0,785,400);
+        keypad.add(keyNumber1, 2, 1);
+        keypad.add(keyNumber2, 2, 1);
+        keypad.add(keyNumber3, 2, 1);
+        keypad.add(keyNumber4, 2, 1);
+        keypad.add(keyNumber5, 2, 1);
+        keypad.add(keyNumber6, 2, 1);
+        keypad.add(keyNumber7, 2, 1);
+        keypad.add(keyNumber8, 2, 1);
+        keypad.add(keyNumber9, 2, 1);
+        keypad.add(keyNumber0, 2, 1);
+        keypad.add(keyNumber000, 2, 1);
+        keypad.add(keyEnter, 2, 1);
+        keypad.add(keyDelete, 2, 1);
+        keypad.add(keyClear, 2, 1);
+        keypad.add(keyCancel, 2, 1);
+        bottom.add(bottompanel,0);
+        bottom.add(keypad,2,1);
+        bottom.add(keyCardtestonly,2,1);
         for(int i=0;i<12;i++)
         {
-            bottom.add(WalletOps[i]);
-            bottom.add(WLabels[i]);
+            bottom.add(WalletOps[i],2,1);
+            bottom.add(WLabels[i],2,1);
         }
         center.add(State);
+        JLabel leftpanel = new JLabel(new ImageIcon(this.getClass().getResource("/leftpanel.png")));
+        JLabel rightpanel = new JLabel(new ImageIcon(this.getClass().getResource("/rightpanel.png")));
 
-        left.add(keyLeft1);
-        left.add(keyLeft2);
-        left.add(keyLeft3);
+        leftpanel.setBounds(0,0,100,350);
+        rightpanel.setBounds(0,0,100,350);
 
-        right.add(keyRight1);
-        right.add(keyRight2);
-        right.add(keyRight3);
+        left.add(leftpanel,0);
+        left.add(keyLeft1,2,1);
+        left.add(keyLeft2,2,1);
+        left.add(keyLeft3,2,1);
+
+        right.add(rightpanel,0);
+        right.add(keyRight1,2,1);
+        right.add(keyRight2,2,1);
+        right.add(keyRight3,2,1);
 
         this.setJMenuBar(Menubar);
         this.add(top, BorderLayout.NORTH);
@@ -481,6 +473,7 @@ private void updatePos()
         Sound background = new Sound();
         background.playSound("/dzwiek_bankomatu.wav");
         background.playBackgroundMusic("/szum.wav");
+
 
     }
 
@@ -648,26 +641,37 @@ private void updatePos()
             }
             else
             {
-                JOptionPane.showMessageDialog(this,"Yo cannot change the card now","Warning",JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this,"You cannot change the card now","Warning",JOptionPane.WARNING_MESSAGE);
             }
         }
 
             String [] nominals={"10","20","50","100","200","500"};
             for(int i=0;i<12;i++)
             {
-                    switch (i % 2)
-                    {
-                        case 0:
-                            if(e.getSource()==WalletOps[i] && State.getCurrentState().equals("INPUT"))operational.transfer(nominals[i / 2], temporary);
-                            WLabels[i].setText(nominals[i/2]+" x" + temporary.getAmount(nominals[i / 2]));
-                            WLabels[i + 1].setText("x" + operational.getAmount(nominals[i / 2]));
-                            break;
-                        case 1:
-                            if(e.getSource()==WalletOps[i] && State.getCurrentState().equals("INPUT"))temporary.transfer(nominals[i / 2], operational);
-                            WLabels[i - 1].setText(nominals[i/2]+" x" + temporary.getAmount(nominals[i / 2]));
-                            WLabels[i].setText("x" + operational.getAmount(nominals[i / 2]));
-                            break;
+                if(State.getCurrentState().equals("INPUT"))
+                {
+                    WLabels[i].setVisible(true);
+                    WalletOps[i].setVisible(true);
+                }
+                else
+                {
+                    WLabels[i].setVisible(false);
+                    WalletOps[i].setVisible(false);
+                }
+                switch (i % 2) {
+                    case 0 -> {
+                        if (e.getSource() == WalletOps[i] && State.getCurrentState().equals("INPUT"))
+                            operational.transfer(nominals[i / 2], temporary);
+                        WLabels[i].setText(nominals[i / 2] + " x" + temporary.getAmount(nominals[i / 2]));
+                        WLabels[i + 1].setText("x" + operational.getAmount(nominals[i / 2]));
                     }
+                    case 1 -> {
+                        if (e.getSource() == WalletOps[i] && State.getCurrentState().equals("INPUT"))
+                            temporary.transfer(nominals[i / 2], operational);
+                        WLabels[i - 1].setText(nominals[i / 2] + " x" + temporary.getAmount(nominals[i / 2]));
+                        WLabels[i].setText("x" + operational.getAmount(nominals[i / 2]));
+                    }
+                }
             }
 
         if(!State.getCurrentState().equals("INPUT"))
