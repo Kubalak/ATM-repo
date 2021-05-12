@@ -34,7 +34,7 @@ public abstract class Settings
     /**
      * Waluta używana w bankomacie.
      */
-    public static String currency = "null",path = null;
+    public static String currency = "-",path = null;
     /**
      * Wektor przechowujący użytkowników.
      */
@@ -117,6 +117,7 @@ public abstract class Settings
         {
             System.out.println("Exception: "+exception.getMessage());
             users.add(new User("John","Trueman"));
+            currency = "-";
             CreditCard[] tmp = new CreditCard[1];
             tmp[0] = new CreditCard(1111);
             users.get(0).addCards(tmp);

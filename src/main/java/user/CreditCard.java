@@ -30,6 +30,12 @@ public class CreditCard extends Account
         this.PINNo = Math.abs(PINNo)%10000;
         locked = false;
     }
+    public CreditCard(CreditCard card)
+    {
+        super(card.checkCredit());
+        this.PINNo = card.PINNo;
+        this.locked = card.locked;
+    }
 
     /**
      * Drugi z konstruktorów klasy - tworzy nową kartę przypisaną do konta o saldzie 0.
@@ -42,6 +48,11 @@ public class CreditCard extends Account
         locked = false;
     }
 
+    /**
+     * Pobiera PIN do karty - tylko klasy dziedziczące moga korzystać.
+     * @return <b style="color:#B45700;">int</b> - PIN do karty.
+     */
+    protected int adminPINGet(){return PINNo;}
     /**
      * Administracyjne ustawienie PINu - używane w programie do edycji zapisu.
      * @param PIN <b style="color:#B45700;">int</b> - Nowy kod PIN.

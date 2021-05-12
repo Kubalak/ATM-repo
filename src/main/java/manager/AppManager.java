@@ -1,16 +1,18 @@
 package manager;
 import settings.Settings;
+import user.User;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class AppManager extends JPanel implements ActionListener
+public class AppManager extends JPanel implements ActionListener, Manager
 {
 
-    private JTextField XField,YField,CurrencyField;
+    private JTextField xField,yField,currencyField;
     private JComboBox<Integer> selectedUsr;
-    JButton Apply,Blank,Preview;
+    private JButton apply,blank,preview;
     public AppManager()
     {
         this.setLayout(null);
@@ -19,17 +21,19 @@ public class AppManager extends JPanel implements ActionListener
         Y = new JLabel("Position Y: ");
         currency  = new JLabel("Currency: ");
         selectUsr = new JLabel("Startup user: ");
-        Apply = new JButton("Apply");
-        Blank = new JButton("Clear");
-        Preview = new JButton("Preview");
-        Apply.addActionListener(this);
-        Blank.addActionListener(this);
-        Preview.addActionListener(this);
+        apply = new JButton("Apply");
+        blank = new JButton("Clear");
+        preview = new JButton("Preview");
 
-        XField = new JTextField();
-        YField = new JTextField();
-        CurrencyField = new JTextField();
+        apply.addActionListener(this);
+        blank.addActionListener(this);
+        preview.addActionListener(this);
+
+        xField = new JTextField();
+        yField = new JTextField();
+        currencyField = new JTextField();
         selectedUsr = new JComboBox<>();
+        selectedUsr.addActionListener(this);
         X.setFont(new Font("Arial",Font.PLAIN,12));
         Y.setFont(new Font("Arial",Font.PLAIN,12));
         currency.setFont(new Font("Arial",Font.PLAIN,12));
@@ -43,61 +47,101 @@ public class AppManager extends JPanel implements ActionListener
         selectUsr.setHorizontalAlignment(SwingConstants.RIGHT);
         selectUsr.setHorizontalTextPosition(SwingConstants.RIGHT);
         X.setBounds(85,25,65,40);
-        XField.setBounds(X.getX()+X.getWidth()+5,X.getY(),100,40);
+        xField.setBounds(X.getX()+X.getWidth()+5,X.getY(),100,40);
         Y.setBounds(X.getX(),X.getY()+X.getHeight()+5,65,40);
-        YField.setBounds(X.getX()+X.getWidth()+5,Y.getY(),100,40);
+        yField.setBounds(X.getX()+X.getWidth()+5,Y.getY(),100,40);
         currency.setBounds(X.getX(),Y.getY()+Y.getHeight()+5,65,40);
-        CurrencyField.setBounds(X.getX()+X.getWidth()+5, currency.getY(),100,40);
+        currencyField.setBounds(X.getX()+X.getWidth()+5, currency.getY(),100,40);
         selectUsr.setBounds(X.getX() - 40,currency.getY()+currency.getHeight()+5,105,40);
         selectedUsr.setBounds(X.getX()+X.getWidth()+5, selectUsr.getY(),100,40);
         selectedUsr.setEditable(false);
         selectedUsr.setFocusable(false);
-        Apply.setFocusable(false);
-        Blank.setFocusable(false);
-        Preview.setFocusable(false);
-        Apply.setBounds(X.getX()+5,selectedUsr.getY()+selectedUsr.getHeight()+5,80,30);
-        Blank.setBounds(Apply.getX()+Apply.getWidth()+5,selectedUsr.getY()+selectedUsr.getHeight() +5,80,30);
-        Preview.setBounds(Apply.getX(),Blank.getY()+Blank.getHeight() +5,165,30);
+        apply.setFocusable(false);
+        blank.setFocusable(false);
+        preview.setFocusable(false);
+        apply.setBounds(X.getX()+5,selectedUsr.getY()+selectedUsr.getHeight()+5,80,30);
+        blank.setBounds(apply.getX()+apply.getWidth()+5,selectedUsr.getY()+selectedUsr.getHeight() +5,80,30);
+        preview.setBounds(apply.getX(),blank.getY()+blank.getHeight() +5,165,30);
         if(Settings.users.isEmpty())
         {
-            XField.setEnabled(false);
-            YField.setEnabled(false);
+            xField.setEnabled(false);
+            yField.setEnabled(false);
             selectedUsr.setEnabled(false);
-            CurrencyField.setEnabled(false);
-            Apply.setEnabled(false);
-            Preview.setEnabled(false);
+            currencyField.setEnabled(false);
+            apply.setEnabled(false);
+            preview.setEnabled(false);
         }
         this.add(X);
-        this.add(XField);
+        this.add(xField);
         this.add(Y);
-        this.add(YField);
+        this.add(yField);
         this.add(currency);
-        this.add(CurrencyField);
+        this.add(currencyField);
         this.add(selectUsr);
         this.add(selectedUsr);
-        this.add(Apply);
-        this.add(Blank);
-        this.add(Preview);
+        this.add(apply);
+        this.add(blank);
+        this.add(preview);
+
+    }
+
+    @Override
+    public void updateFields()
+    {
+        selectedUsr.removeAllItems();
+        if(!Settings.users.isEmpty())
+        {
+        xField.setText(String.valueOf(Settings.posX));
+        yField.setText(String.valueOf(Settings.posY));
+        currencyField.setText(String.valueOf(Settings.currency));
+        xField.setEnabled(true);
+        yField.setEnabled(true);
+        currencyField.setEnabled(true);
+        apply.setEnabled(true);
+        selectedUsr.setEnabled(true);
+        preview.setEnabled(true);
+
+            for (int i = 0; i < Settings.users.size(); i++) {
+                selectedUsr.addItem(i);
+            }
+            selectedUsr.setSelectedIndex(Settings.currentUser());
+        }
 
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == Apply)
+        if(e.getSource() == apply)
         {
             System.out.println("You have applied somethings.");
+            try
+            {
+                Settings.posX = Integer.parseInt(xField.getText());
+                Settings.posY = Integer.parseInt(yField.getText());
+                Settings.currency = currencyField.getText();
+                Settings.setCurrentUser(selectedUsr.getSelectedIndex());
+            }
+            catch(Exception exception)
+            {
+                JOptionPane.showMessageDialog(this,"Invalid arguments!\nException: "+exception.getMessage(),"Input error",JOptionPane.ERROR_MESSAGE);
+            }
         }
-        else if(e.getSource() == Blank)
+        else if(e.getSource() == blank)
         {
-            System.out.println("You have blanked something.");
-            XField.setEnabled(true);
-            YField.setEnabled(true);
+            xField.setEnabled(true);
+            yField.setEnabled(true);
             selectedUsr.setEnabled(true);
-            CurrencyField.setEnabled(true);
-            Apply.setEnabled(true);
-            XField.setText("0");
-            YField.setText("0");
-            CurrencyField.setText("-");
-            if(selectedUsr.getItemCount()>0)selectedUsr.setSelectedIndex(0);
+            currencyField.setEnabled(true);
+            apply.setEnabled(true);
+            xField.setText("0");
+            yField.setText("0");
+            currencyField.setText("-");
+            selectedUsr.removeAllItems();
+            if(!Settings.users.isEmpty()) {
+                for (int i = 0; i < Settings.users.size(); i++) {
+                    selectedUsr.addItem(i);
+                }
+                selectedUsr.setSelectedIndex(Settings.currentUser());
+            }
         }
 
     }

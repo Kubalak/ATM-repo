@@ -27,6 +27,16 @@ public class Wallet
         else tens = twenties = fifties = hundreds = two_hundreds = five_hundreds = 1;
     }
 
+    public Wallet(Wallet wallet)
+    {
+        this.tens = wallet.tens;
+        this.twenties = wallet.twenties;
+        this.fifties = wallet.fifties;
+        this.hundreds = wallet.hundreds;
+        this.two_hundreds = wallet.two_hundreds;
+        this.five_hundreds = wallet.five_hundreds;
+    }
+
     /**
      * Drugi konstruktor klasy.
      * @param cash <b style="color:#B45700;">int</b> - Ilość gotówki w portfelu (automatycznie dzielona na banknoty algorytmem zachłannym).
@@ -48,6 +58,22 @@ public class Wallet
 
     }
 
+    protected void adminSet(String what, int amount)
+    {
+        if(amount<0||what==null)
+        {
+            System.out.println("Operation not permitted!");
+        }
+        else if(what.toLowerCase().equals("10"))tens=amount;
+    else if(what.toLowerCase().equals("20"))twenties=amount;
+    else if(what.toLowerCase().equals("50"))fifties=amount;
+    else if(what.toLowerCase().equals("100"))hundreds=amount;
+    else if(what.toLowerCase().equals("200"))two_hundreds=amount;
+    else if(what.toLowerCase().equals("500"))five_hundreds=amount;
+    else  System.out.println("No banknote available!");
+
+
+    }
     /**
      * Metoda służąca do wpłacania gotówki według nominałów.
      * @param what <b style="color:#0B5E03;">String</b> - Nazwa banknotu, którego ilość ma być wpłacona.

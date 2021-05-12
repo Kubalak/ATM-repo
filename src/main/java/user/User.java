@@ -183,7 +183,7 @@ public class User
         result+=margin+spacer+"<name>"+Name+"</name>\n";
         result+=margin+spacer+"<surname>"+Surname+"</surname>\n";
         result+=wallet.toXML(margin + spacer, spacer);
-        if(cards!=null) {
+        if(!cards.isEmpty()) {
             result += margin + spacer + "<cards>\n";
             result+=margin+spacer+"<current>"+currentCard+"</current>\n";
             for (int i = 0; i < cards.size(); i++) {
@@ -191,7 +191,7 @@ public class User
             }
             result += margin + spacer + "</cards>\n";
         }
-        else result+=margin + spacer +"<cards>null</cards>\n";
+        else result+=margin + spacer +"<cards></cards>\n";
         result+=margin+"</user>\n";
         return result;
     }
