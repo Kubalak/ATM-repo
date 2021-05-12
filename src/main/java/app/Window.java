@@ -140,14 +140,20 @@ private void updatePos()
         JPanel center = new JPanel();
 
         JLayeredPane keypad = new JLayeredPane();
+try {
+    JLabel keypadBackground = new JLabel(new ImageIcon(this.getClass().getResource("/textures/keypad.png")));
+    keypadBackground.setBounds(0,0,400,350);
+    keypad.add(keypadBackground, 0);
 
-        JLabel keypadBackground = new JLabel(new ImageIcon(this.getClass().getResource("/textures/keypad.png")));
-        keypadBackground.setBounds(0,0,400,350);
-        keypad.add(keypadBackground, 0);
+    JLabel topBackground = new JLabel(new ImageIcon(this.getClass().getResource("/textures/banner.png")));
+    topBackground.setBounds(0,10,100,100);
+    top.add(topBackground);
+}
+catch(Exception e)
+{
+    System.out.println(e.getMessage());
+}
 
-        JLabel topBackground = new JLabel(new ImageIcon(this.getClass().getResource("/textures/banner.png")));
-        topBackground.setBounds(0,10,100,100);
-        top.add(topBackground);
         bottom.setLayout(null);
         left.setLayout(null);
         right.setLayout(null);
@@ -188,8 +194,14 @@ private void updatePos()
             WalletOps[i].setOpaque(false);
             WalletOps[i].setBackground(null);
             WalletOps[i].setBorder(null);
-            WalletOps[i].setIcon(new ImageIcon(this.getClass().getResource((i%2==0)?"/textures/plus.png":"/textures/minus.png")));
-            WalletOps[i].setPressedIcon(new ImageIcon(this.getClass().getResource((i%2==0)?"/textures/plus_w.png":"/textures/minus_w.png")));
+            try {
+                WalletOps[i].setIcon(new ImageIcon(this.getClass().getResource((i % 2 == 0) ? "/textures/plus.png" : "/textures/minus.png")));
+                WalletOps[i].setPressedIcon(new ImageIcon(this.getClass().getResource((i % 2 == 0) ? "/textures/plus_w.png" : "/textures/minus_w.png")));
+            }
+            catch(Exception e)
+            {
+                System.out.println(e.getMessage());
+            }
             WalletOps[i].setFocusable(false);
             WalletOps[i].addActionListener(this);
             WalletOps[i].setVisible(false);
