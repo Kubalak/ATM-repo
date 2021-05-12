@@ -5,6 +5,8 @@ import sound.Sound;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Objects;
 
 /**
@@ -26,8 +28,6 @@ public class Window extends JFrame implements ActionListener{
      * Przycisk używzany przez główne okno - klawisze specjalne kalwisze na keypadzie.
      */
    private final JButton  keyEnter, keyDelete, keyClear,keyCancel,keyCardtestonly;
-
-
 
     /**
      * Przyciski używzany przez główne okno - operacje przekazywania gotówki.
@@ -62,6 +62,7 @@ public class Window extends JFrame implements ActionListener{
      * <i>"Portfele"</i> używane w operacji depozytu.
      */
    private final Wallet operational,temporary;
+   private String version = "1.0";
 
     /**
      * Tablica przechowująca wszystkich użytkowników - <i style="background:rgba(92,92,92,0.5);border-radius:0.5em;">&nbsp;settings.xml&nbsp;</i> oraz zapisywana do niego podczas zamykania programu.
@@ -79,7 +80,7 @@ private void updatePos()
     {
         ImageIcon icon = null;
         try {
-           icon = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("/logo.png")));
+           icon = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("/textures/logo.png")));
         }
         catch(NullPointerException exception)
         {
@@ -121,7 +122,16 @@ private void updatePos()
         if(!defaultPos)this.setLocation(Settings.posX,Settings.posY);
         operational = new Wallet(true);
         temporary = Settings.users.get(Settings.currentUser()).getWallet().copy();
-
+        try
+        {
+            InputStreamReader stream = new InputStreamReader(this.getClass().getResourceAsStream("/VERSION"));
+            BufferedReader reader = new BufferedReader(stream);
+            version = reader.readLine();
+        }
+        catch (Exception e)
+        {
+            System.out.println("Cannot get VERSION file");
+        }
 
         JPanel top = new JPanel();
         JLayeredPane left = new JLayeredPane();
@@ -131,11 +141,11 @@ private void updatePos()
 
         JLayeredPane keypad = new JLayeredPane();
 
-        JLabel keypadBackground = new JLabel(new ImageIcon(this.getClass().getResource("/keypad.png")));
+        JLabel keypadBackground = new JLabel(new ImageIcon(this.getClass().getResource("/textures/keypad.png")));
         keypadBackground.setBounds(0,0,400,350);
         keypad.add(keypadBackground, 0);
 
-        JLabel topBackground = new JLabel(new ImageIcon(this.getClass().getResource("/banner.png")));
+        JLabel topBackground = new JLabel(new ImageIcon(this.getClass().getResource("/textures/banner.png")));
         topBackground.setBounds(0,10,100,100);
         top.add(topBackground);
         bottom.setLayout(null);
@@ -178,8 +188,8 @@ private void updatePos()
             WalletOps[i].setOpaque(false);
             WalletOps[i].setBackground(null);
             WalletOps[i].setBorder(null);
-            WalletOps[i].setIcon(new ImageIcon(this.getClass().getResource((i%2==0)?"/plus.png":"/minus.png")));
-            WalletOps[i].setPressedIcon(new ImageIcon(this.getClass().getResource((i%2==0)?"/plus_w.png":"/minus_w.png")));
+            WalletOps[i].setIcon(new ImageIcon(this.getClass().getResource((i%2==0)?"/textures/plus.png":"/textures/minus.png")));
+            WalletOps[i].setPressedIcon(new ImageIcon(this.getClass().getResource((i%2==0)?"/textures/plus_w.png":"/textures/minus_w.png")));
             WalletOps[i].setFocusable(false);
             WalletOps[i].addActionListener(this);
             WalletOps[i].setVisible(false);
@@ -371,56 +381,56 @@ private void updatePos()
         keyCardtestonly.addActionListener(this);
 
         try{
-            keyNumber1.setIcon(new ImageIcon(this.getClass().getResource("/1.png")));
-            keyNumber1.setPressedIcon(new ImageIcon(this.getClass().getResource("/1_w.png")));
-            keyNumber2.setIcon(new ImageIcon(this.getClass().getResource("/2.png")));
-            keyNumber2.setPressedIcon(new ImageIcon(this.getClass().getResource("/2_w.png")));
-            keyNumber3.setIcon(new ImageIcon(this.getClass().getResource("/3.png")));
-            keyNumber3.setPressedIcon(new ImageIcon(this.getClass().getResource("/3_w.png")));
-            keyNumber4.setIcon(new ImageIcon(this.getClass().getResource("/4.png")));
-            keyNumber4.setPressedIcon(new ImageIcon(this.getClass().getResource("/4_w.png")));
-            keyNumber5.setIcon(new ImageIcon(this.getClass().getResource("/5.png")));
-            keyNumber5.setPressedIcon(new ImageIcon(this.getClass().getResource("/5_w.png")));
-            keyNumber6.setIcon(new ImageIcon(this.getClass().getResource("/6.png")));
-            keyNumber6.setPressedIcon(new ImageIcon(this.getClass().getResource("/6_w.png")));
-            keyNumber7.setIcon(new ImageIcon(this.getClass().getResource("/7.png")));
-            keyNumber7.setPressedIcon(new ImageIcon(this.getClass().getResource("/7_w.png")));
-            keyNumber8.setIcon(new ImageIcon(this.getClass().getResource("/8.png")));
-            keyNumber8.setPressedIcon(new ImageIcon(this.getClass().getResource("/8_w.png")));
-            keyNumber9.setIcon(new ImageIcon(this.getClass().getResource("/9.png")));
-            keyNumber9.setPressedIcon(new ImageIcon(this.getClass().getResource("/9_w.png")));
-            keyNumber0.setIcon(new ImageIcon(this.getClass().getResource("/0.png")));
-            keyNumber0.setPressedIcon(new ImageIcon(this.getClass().getResource("/0_w.png")));
-            keyNumber000.setIcon(new ImageIcon(this.getClass().getResource("/000.png")));
-            keyNumber000.setPressedIcon(new ImageIcon(this.getClass().getResource("/000_w.png")));
-            keyEnter.setIcon(new ImageIcon(this.getClass().getResource("/enter.png")));
-            keyEnter.setPressedIcon(new ImageIcon(this.getClass().getResource("/enter_w.png")));
-            keyDelete.setIcon(new ImageIcon(this.getClass().getResource("/delete.png")));
-            keyDelete.setPressedIcon(new ImageIcon(this.getClass().getResource("/delete_w.png")));
-            keyClear.setIcon(new ImageIcon(this.getClass().getResource("/clear.png")));
-            keyClear.setPressedIcon(new ImageIcon(this.getClass().getResource("/clear_w.png")));
-            keyCancel.setIcon(new ImageIcon(this.getClass().getResource("/cancel_b.png")));
-            keyCancel.setPressedIcon(new ImageIcon(this.getClass().getResource("/cancel_b_w.png")));
-            keyLeft1.setIcon(new ImageIcon(this.getClass().getResource("/arrow_right.png")));
-            keyLeft1.setPressedIcon(new ImageIcon(this.getClass().getResource("/arrow_right_w.png")));
-            keyLeft2.setIcon(new ImageIcon(this.getClass().getResource("/arrow_right.png")));
-            keyLeft2.setPressedIcon(new ImageIcon(this.getClass().getResource("/arrow_right_w.png")));
-            keyLeft3.setIcon(new ImageIcon(this.getClass().getResource("/arrow_right.png")));
-            keyLeft3.setPressedIcon(new ImageIcon(this.getClass().getResource("/arrow_right_w.png")));
-            keyRight1.setIcon(new ImageIcon(this.getClass().getResource("/arrow_left.png")));
-            keyRight1.setPressedIcon(new ImageIcon(this.getClass().getResource("/arrow_left_w.png")));
-            keyRight2.setIcon(new ImageIcon(this.getClass().getResource("/arrow_left.png")));
-            keyRight2.setPressedIcon(new ImageIcon(this.getClass().getResource("/arrow_left_w.png")));
-            keyRight3.setIcon(new ImageIcon(this.getClass().getResource("/arrow_left.png")));
-            keyRight3.setPressedIcon(new ImageIcon(this.getClass().getResource("/arrow_left_w.png")));
-            keyCardtestonly.setIcon(new ImageIcon(this.getClass().getResource("/card_slot_a.png")));
-            keyCardtestonly.setPressedIcon(new ImageIcon(this.getClass().getResource("/card_slot_in.png")));
+            keyNumber1.setIcon(new ImageIcon(this.getClass().getResource("/textures/1.png")));
+            keyNumber1.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/1_w.png")));
+            keyNumber2.setIcon(new ImageIcon(this.getClass().getResource("/textures/2.png")));
+            keyNumber2.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/2_w.png")));
+            keyNumber3.setIcon(new ImageIcon(this.getClass().getResource("/textures/3.png")));
+            keyNumber3.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/3_w.png")));
+            keyNumber4.setIcon(new ImageIcon(this.getClass().getResource("/textures/4.png")));
+            keyNumber4.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/4_w.png")));
+            keyNumber5.setIcon(new ImageIcon(this.getClass().getResource("/textures/5.png")));
+            keyNumber5.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/5_w.png")));
+            keyNumber6.setIcon(new ImageIcon(this.getClass().getResource("/textures/6.png")));
+            keyNumber6.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/6_w.png")));
+            keyNumber7.setIcon(new ImageIcon(this.getClass().getResource("/textures/7.png")));
+            keyNumber7.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/7_w.png")));
+            keyNumber8.setIcon(new ImageIcon(this.getClass().getResource("/textures/8.png")));
+            keyNumber8.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/8_w.png")));
+            keyNumber9.setIcon(new ImageIcon(this.getClass().getResource("/textures/9.png")));
+            keyNumber9.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/9_w.png")));
+            keyNumber0.setIcon(new ImageIcon(this.getClass().getResource("/textures/0.png")));
+            keyNumber0.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/0_w.png")));
+            keyNumber000.setIcon(new ImageIcon(this.getClass().getResource("/textures/000.png")));
+            keyNumber000.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/000_w.png")));
+            keyEnter.setIcon(new ImageIcon(this.getClass().getResource("/textures/enter.png")));
+            keyEnter.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/enter_w.png")));
+            keyDelete.setIcon(new ImageIcon(this.getClass().getResource("/textures/delete.png")));
+            keyDelete.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/delete_w.png")));
+            keyClear.setIcon(new ImageIcon(this.getClass().getResource("/textures/clear.png")));
+            keyClear.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/clear_w.png")));
+            keyCancel.setIcon(new ImageIcon(this.getClass().getResource("/textures/cancel_b.png")));
+            keyCancel.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/cancel_b_w.png")));
+            keyLeft1.setIcon(new ImageIcon(this.getClass().getResource("/textures/arrow_right.png")));
+            keyLeft1.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/arrow_right_w.png")));
+            keyLeft2.setIcon(new ImageIcon(this.getClass().getResource("/textures/arrow_right.png")));
+            keyLeft2.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/arrow_right_w.png")));
+            keyLeft3.setIcon(new ImageIcon(this.getClass().getResource("/textures/arrow_right.png")));
+            keyLeft3.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/arrow_right_w.png")));
+            keyRight1.setIcon(new ImageIcon(this.getClass().getResource("/textures/arrow_left.png")));
+            keyRight1.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/arrow_left_w.png")));
+            keyRight2.setIcon(new ImageIcon(this.getClass().getResource("/textures/arrow_left.png")));
+            keyRight2.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/arrow_left_w.png")));
+            keyRight3.setIcon(new ImageIcon(this.getClass().getResource("/textures/arrow_left.png")));
+            keyRight3.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/arrow_left_w.png")));
+            keyCardtestonly.setIcon(new ImageIcon(this.getClass().getResource("/textures/card_slot_a.png")));
+            keyCardtestonly.setPressedIcon(new ImageIcon(this.getClass().getResource("/textures/card_slot_in.png")));
         }catch(NullPointerException e)
         {
             System.out.println(e);
         }
 
-        JLabel bottompanel =  new JLabel(new ImageIcon(this.getClass().getResource("/bottom.png")));
+        JLabel bottompanel =  new JLabel(new ImageIcon(this.getClass().getResource("/textures/bottom.png")));
         bottompanel.setBounds(0,0,785,400);
         keypad.add(keyNumber1, 2, 1);
         keypad.add(keyNumber2, 2, 1);
@@ -446,8 +456,8 @@ private void updatePos()
             bottom.add(WLabels[i],2,1);
         }
         center.add(State);
-        JLabel leftpanel = new JLabel(new ImageIcon(this.getClass().getResource("/leftpanel.png")));
-        JLabel rightpanel = new JLabel(new ImageIcon(this.getClass().getResource("/rightpanel.png")));
+        JLabel leftpanel = new JLabel(new ImageIcon(this.getClass().getResource("/textures/leftpanel.png")));
+        JLabel rightpanel = new JLabel(new ImageIcon(this.getClass().getResource("/textures/rightpanel.png")));
 
         leftpanel.setBounds(0,0,100,350);
         rightpanel.setBounds(0,0,100,350);
@@ -471,8 +481,8 @@ private void updatePos()
         this.repaint();
         this.setVisible(true);
         Sound background = new Sound();
-        background.playSound("/dzwiek_bankomatu.wav");
-        background.playBackgroundMusic("/szum.wav");
+        background.playSound("/sounds/dzwiek_bankomatu.wav");
+        background.playBackgroundMusic("/sounds/szum.wav");
 
 
     }
@@ -490,91 +500,91 @@ private void updatePos()
 
         if(e.getSource()==keyNumber0){
             State.sendSignal(0,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyNumber1){
                 State.sendSignal(1, operational);
-                sounds_play.playSound("/dzwiek_klikania.wav");
+                sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyNumber2){
             State.sendSignal(2,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyNumber3){
             State.sendSignal(3,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyNumber4){
             State.sendSignal(4,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyNumber5){
             State.sendSignal(5,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyNumber6){
             State.sendSignal(6,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyNumber7){
             State.sendSignal(7,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyNumber8){
             State.sendSignal(8,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyNumber9){
             State.sendSignal(9,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyNumber000) {
             State.sendSignal(10,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyLeft1){
             State.sendSignal(-1,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyLeft2){
             State.sendSignal(-2,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyLeft3){
             State.sendSignal(-3,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyRight1){
             State.sendSignal(-4,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyRight2){
             State.sendSignal(-5,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyRight3){
             State.sendSignal(-6,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyEnter){
             State.sendSignal(-7,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyDelete){
             State.sendSignal(-8,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyClear) {
             State.sendSignal(-9,operational);
-            sounds_play.playSound("/dzwiek_klikania.wav");
+            sounds_play.playSound("/sounds/dzwiek_klikania.wav");
         }
         else if(e.getSource()==keyCancel){
             State.sendSignal(-10,operational);
-            sounds_play.playSound("/wysuwanie_karty.wav");
+            sounds_play.playSound("/sounds/wysuwanie_karty.wav");
         }
         else if(e.getSource()==keyCardtestonly)
         {
-            sounds_play.playSound("/wsuwanie_karty.wav");
+            sounds_play.playSound("/sounds/wsuwanie_karty.wav");
             if(!State.isCardInserted())
             {
                 if(State.insertCard() == 0)
@@ -586,7 +596,7 @@ private void updatePos()
         }
         else if(e.getSource()==About)
         {
-            JOptionPane.showMessageDialog(null,"ATM simulator v0.7.0","Info",JOptionPane.INFORMATION_MESSAGE);//Sugeruję tutaj wykorzystać <version> </version> z pliku pom.xml na przykład jak zrobiono https://www.baeldung.com/java-accessing-maven-properties
+            JOptionPane.showMessageDialog(null,"ATM simulator v"+version,"Info",JOptionPane.INFORMATION_MESSAGE);//Sugeruję tutaj wykorzystać <version> </version> z pliku pom.xml na przykład jak zrobiono https://www.baeldung.com/java-accessing-maven-properties
         }
         else if(e.getSource() == Exit)
         {

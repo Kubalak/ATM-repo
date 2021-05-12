@@ -218,7 +218,7 @@ public class StateManager extends JPanel
         if(!currentState.equals("INPUT")) {
             return false;
         }
-        sounds_play.playSound("/dzwiek_bankomatu.wav");
+        sounds_play.playSound("/sounds/dzwiek_bankomatu.wav");
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
@@ -554,14 +554,14 @@ public class StateManager extends JPanel
             System.out.println("Withdraw success!");
             random_number = generator.nextInt(2);
             if(random_number == 0) {
-                sounds_play.playSound("/wysuwanie_gotowki.wav");
+                sounds_play.playSound("/sounds/wysuwanie_gotowki.wav");
                 try {
                     Thread.sleep(4000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }else if(random_number == 1) {
-                sounds_play.playSound("/wysuwanie_gotowki2.wav");
+                sounds_play.playSound("/sounds/wysuwanie_gotowki2.wav");
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
@@ -713,14 +713,14 @@ public class StateManager extends JPanel
                 }
                 else {
                     failsNo--;
-                    sounds_play.playSound("/dlugie_pikanie_jedno.wav");
+                    sounds_play.playSound("/sounds/dlugie_pikanie_jedno.wav");
                     changeState(states[8]);
 
                     if(failsNo == 0)
                     {
                         user.blockCard();
                         changeState(states[9]);
-                        sounds_play.playSound("/dlugie_pikanie_kilka.wav");
+                        sounds_play.playSound("/sounds/dlugie_pikanie_kilka.wav");
                         System.out.println("Card locked!");
                     }
                     else {
