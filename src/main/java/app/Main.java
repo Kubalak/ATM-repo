@@ -6,7 +6,7 @@ import settings.Settings;
 /**
  * Główna klasa programu wraz ze statyczną metodą <i>main</i>.
  *
- * @author Jakub Jach
+ * @author Jakub Jach, Patryk Jaworski
  * @version 1.0
  * @since 2021-01-10
  */

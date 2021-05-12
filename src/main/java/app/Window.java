@@ -13,6 +13,9 @@ import java.util.Objects;
  * Klasa odpowiedzialna za główne okno aplikacji.
  * To ono wysyła sygnały do obiektu klasy <i>StateManager</i>.
  * Plik z danymi <i style="background:rgba(92,92,92,0.5);border-radius: 0.5em;">&nbsp;settings.xml&nbsp;</i> znajduje się w katalogu <i style="background:rgba(92,92,92,0.5);border-radius:0.5em;">&nbsp;userdata&nbsp;</i>.
+ * @author Patryk Jaworski, Jakub Jach
+ * @version 1.0
+ * @since 2021-01-10
  */
 
 public class Window extends JFrame implements ActionListener{
@@ -62,6 +65,9 @@ public class Window extends JFrame implements ActionListener{
      * <i>"Portfele"</i> używane w operacji depozytu.
      */
    private final Wallet operational,temporary;
+    /**
+     * Wersja programu - domyślnie 1.0 a uzyskiwana z pliku <i style="background:rgba(92,92,92,0.5);border-radius:0.5em;">&nbsp;VERSION&nbsp;</i> dołączanego jako zasób.
+     */
    private String version = "1.0";
 
     /**
