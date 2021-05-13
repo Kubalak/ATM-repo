@@ -15,7 +15,7 @@ Manager offers:<br><b>
 - Saving configuration to loaded file or if created from scratch to selected folder.
 
 ## Manager - known issues:
-In <i>Users</i> tab of manager app values in <i>Selected user</i> are written to double times when switching tabs.
+In <i>Users</i> tab of manager app values in <i>Selected user</i> are repeated when switching tabs.
 
 # Changelog v0.8.0
 Added textures for other UI elements - banner, keypad and background.<br>
