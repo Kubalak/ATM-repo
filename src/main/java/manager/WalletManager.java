@@ -4,6 +4,7 @@ import settings.Settings;
 import user.Wallet;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -53,6 +54,8 @@ public class WalletManager extends JPanel implements ActionListener,Manager{
         clear.setFocusable(false);
         clear.setBounds(apply.getX()+apply.getWidth()+5,banknoteL[5].getY()+banknoteL[5].getHeight()+10,80,30);
         clear.setEnabled(!Settings.users.isEmpty());
+        apply.addActionListener(this);
+        clear.addActionListener(this);
         this.add(apply);
         this.add(clear);
     }
@@ -65,7 +68,7 @@ public class WalletManager extends JPanel implements ActionListener,Manager{
            for(int i=0;i<6;i++)
             {
                 banknotes[i].setEnabled(enable);
-                banknotes[i].setText(String.valueOf(Settings.users.get(userIndex.getSelectedIndex()).getWallet().getAmount(values[i])));
+                banknotes[i].setText(enable?String.valueOf(Settings.users.get(userIndex.getSelectedIndex()).getWallet().getAmount(values[i])):"");
             }
             apply.setEnabled(enable);
             clear.setEnabled(enable);

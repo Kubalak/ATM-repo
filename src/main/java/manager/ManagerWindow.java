@@ -33,7 +33,7 @@ public class ManagerWindow extends JFrame implements ActionListener, ChangeListe
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         MFile = new JMenu("File");
-        Open = new JMenuItem("Open");
+        Open = new JMenuItem("Load");
         Open.addActionListener(this);
         Save = new JMenuItem("Save");
         Save.addActionListener(this);
@@ -46,7 +46,7 @@ public class ManagerWindow extends JFrame implements ActionListener, ChangeListe
         tmp.add(MFile);
         this.setJMenuBar(tmp);
 
-        Pane = new JTabbedPane();
+        Pane = new JTabbedPane(JTabbedPane.TOP);
         App = new AppManager();
         App.setFocusable(false);
         Usr = new UserManager();
@@ -70,12 +70,18 @@ public class ManagerWindow extends JFrame implements ActionListener, ChangeListe
     {
         if(e.getSource()==Open)
         {
+            if(!Settings.users.isEmpty())
+            {
+              int  result = JOptionPane.showConfirmDialog(this,"Are you sure you wan to proceed?\nAll the unsaved data will be lost!","Continue?",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+              if(result == JOptionPane.YES_OPTION)Settings.users.clear();
+              else return;
+            }
             if(chooser.showOpenDialog(this)==JFileChooser.APPROVE_OPTION)
             {
                 Settings.path = chooser.getSelectedFile().getAbsolutePath();
                 Settings.path+=Settings.path.contains("\\")?"\\":"/";
-                Settings.loadSettings();
-                this.setTitle("Settings manager: Open");
+                boolean isOK = Settings.loadSettings();
+                this.setTitle("Settings manager: Open "+(isOK?"Success":"Failed"));
                 App.updateFields();
                 Usr.updateFields();
                 Wlt.updateFields();
@@ -88,11 +94,37 @@ public class ManagerWindow extends JFrame implements ActionListener, ChangeListe
                 if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                     Settings.path = chooser.getSelectedFile().getAbsolutePath();
                     Settings.path += Settings.path.contains("\\") ? "\\" : "/";
+                    if(Settings.users.isEmpty())
+                    {
+                        JOptionPane.showMessageDialog(this,"Cannot save empty users!","Save error",JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    for(int i=0;i<Settings.users.size();i++)
+                    {
+                        if(Settings.users.get(i).getCards().isEmpty())
+                        {
+                            JOptionPane.showMessageDialog(this,"Cannot save users without cards!","Save error",JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }
                     Settings.saveState();
                     this.setTitle("Settings manager: Save");
                 }
             }
             else {
+                if(Settings.users.isEmpty())
+                {
+                    JOptionPane.showMessageDialog(this,"Cannot save empty users  cards!","Save error",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                for(int i=0;i<Settings.users.size();i++)
+                {
+                    if(Settings.users.get(i).getCards().isEmpty())
+                    {
+                        JOptionPane.showMessageDialog(this,"Cannot save users without cards!","Save error",JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
                 Settings.saveState();
                 this.setTitle("Settings manager: Save");
             }
@@ -110,7 +142,6 @@ public class ManagerWindow extends JFrame implements ActionListener, ChangeListe
     @Override
     public void stateChanged(ChangeEvent e)
     {
-        Usr.updateFields();
         if(Pane.getSelectedComponent() == App)App.updateFields();
         else if(Pane.getSelectedComponent() == Crd)Crd.updateFields();
         else Wlt.updateFields();

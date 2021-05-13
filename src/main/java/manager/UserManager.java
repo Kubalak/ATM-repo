@@ -74,7 +74,7 @@ public class UserManager extends JPanel implements ActionListener,Manager{
         surname.setBounds(surnameL.getX()+surnameL.getWidth()+5,surnameL.getY(),100,40);
         selectedCrdL.setBounds(surnameL.getX(),surnameL.getY()+surnameL.getHeight()+5,75,40);
         selectedCrd.setBounds(selectedCrdL.getX()+selectedCrdL.getWidth()+5,selectedCrdL.getY(),100,40);
-        selectedL.setBounds(selectedCrdL.getX(),selectedCrdL.getY()+selectedCrdL.getHeight()+5,75,40);
+        selectedL.setBounds(selectedCrdL.getX(),selectedCrdL.getY()+selectedCrdL.getHeight()+10,75,40);
         selected.setBounds(selectedL.getX()+selectedL.getWidth()+5,selectedL.getY(),100,40);
         apply.setBounds(nameL.getX(),selected.getY()+selected.getHeight()+5,185,30);
         add.setBounds(apply.getX(),apply.getY()+apply.getHeight()+5,90,30);
@@ -129,6 +129,8 @@ public class UserManager extends JPanel implements ActionListener,Manager{
             selectedCrd.setEnabled(false);
             name.setEnabled(false);
             surname.setEnabled(false);
+            name.setText("");
+            surname.setText("");
         }
     }
 
@@ -178,7 +180,7 @@ public class UserManager extends JPanel implements ActionListener,Manager{
         else if(e.getSource() == selected)
         {
             selectedIndex = selected.getSelectedIndex()!=-1?selected.getSelectedIndex():selectedIndex;
-            System.out.println(selectedIndex);
+            System.out.println("Yo");
             updateFields();
         }
 

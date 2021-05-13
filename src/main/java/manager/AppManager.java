@@ -132,6 +132,7 @@ public class AppManager extends JPanel implements ActionListener, Manager
             selectedUsr.setEnabled(true);
             currencyField.setEnabled(true);
             apply.setEnabled(true);
+            preview.setEnabled(true);
             xField.setText("0");
             yField.setText("0");
             currencyField.setText("-");
@@ -142,6 +143,12 @@ public class AppManager extends JPanel implements ActionListener, Manager
                 }
                 selectedUsr.setSelectedIndex(Settings.currentUser());
             }
+        }
+        else if(e.getSource() == preview)
+        {
+            JFrame tmp = new JFrame("Sample - currency: " + currencyField.getText());
+            tmp.setBounds(Settings.posX,Settings.posY,800,900);
+            tmp.setVisible(true);
         }
 
     }
