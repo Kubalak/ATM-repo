@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <users>
 <currency>PLN</currency>
-<posX>0</posX>
-<posY>0</posY>
-  <current>2</current>
+<posX>-1240</posX>
+<posY>41</posY>
+  <current>0</current>
    <user>
       <name>Johnny</name>
       <surname>Walker</surname>
@@ -16,7 +16,7 @@
          <fivehundreds>1</fivehundreds>
       </wallet>
       <cards>
-      <current>1</current>
+      <current>0</current>
          <card>
             <pin>1234</pin>
             <locked>YES</locked>
@@ -24,7 +24,7 @@
          </card>
          <card>
             <pin>0123</pin>
-            <locked>NO</locked>
+            <locked>YES</locked>
             <credit>250.23</credit>
          </card>
       </cards>
@@ -53,8 +53,8 @@
       <name>Grzegorz</name>
       <surname>Brzęczysczykiewicz</surname>
       <wallet>
-         <tens>4</tens>
-         <twenties>3</twenties>
+         <tens>2</tens>
+         <twenties>4</twenties>
          <fifties>2</fifties>
          <hundreds>1</hundreds>
          <twohundreds>1</twohundreds>
