@@ -3,9 +3,18 @@ Atm project repository.
 
 # Changelog v0.8.9
 Created `AppManager` `UserManager` `CardManager` `WalletManager` classes for the manager app.<br>
-Finished beta version of manager app.
+Finished beta version of manager app.<br>
+Manager offers:<br><b>
+- Loading `settings.xml` files from any folder.<br>
+- Changing Window position with previe function.<br>
+- Selecting user to start application with.<br>
+- Selecting active card for users.<br>
+- Adding / editing / deleting users.<br>
+- Adding / editing / deleting cards for each user.<br>
+- Creating configuration from scratch.<br>
+- Saving configuration to loaded file or if created from scratch to selected folder.
 
-# Manager - known issues:
+## Manager - known issues:
 In <i>Users</i> tab of manager app values in <i>Selected user</i> are written to double times when switching tabs.
 
 # Changelog v0.8.0
