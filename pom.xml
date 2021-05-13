@@ -6,7 +6,7 @@
 
     <groupId>application</groupId>
     <artifactId>ATM_Simulator</artifactId>
-    <version>0.6.0</version>
+    <version>0.8.9</version>
    <build>
        <plugins>
            <plugin>
